@@ -25,7 +25,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			set => SetSelectedIndexClamped(value, sendCallback: true);
 		}
 
-		public IReadOnlyCollection<string> Options {
+		public IEnumerable<string> Options {
 			get => m_Options;
 			set {
 				m_Options = value.ToArray();
