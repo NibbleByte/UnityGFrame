@@ -15,6 +15,17 @@ namespace DevLocker.GFrame.Input
 		void ExitState();
 	}
 
+	/// <summary>
+	/// Implement this in addition to <see cref="IPlayerState"/> to get notified when state is added or removed from the states stack.
+	/// States can still be in the stack while inactive if another one was pushed on top.
+	/// In that case state would get <see cref="IPlayerState.ExitState()"/> but not <see cref="RemovedFromStateStack()"/>
+	/// </summary>
+	public interface IPlayerStateStacked : IPlayerState
+	{
+		void AddedToStateStack();
+		void RemovedFromStateStack();
+	}
+
 	public enum StackAction
 	{
 		ClearAndPush,
@@ -122,7 +133,11 @@ namespace DevLocker.GFrame.Input
 			OnExitedState();
 
 			for (int i = 0; i < count; ++i) {
-				m_StackedStates.Pop();
+				IPlayerState poppedState = m_StackedStates.Pop();
+
+				if (poppedState is IPlayerStateStacked poppedStackedState) {
+					poppedStackedState.RemovedFromStateStack();
+				}
 			}
 
 			OnEnteringState();
@@ -176,14 +191,27 @@ namespace DevLocker.GFrame.Input
 				}
 
 				if (stackAction == StackAction.ClearAndPush) {
-					m_StackedStates.Clear();
+					while (m_StackedStates.Count > 0) {
+						IPlayerState poppedState = m_StackedStates.Pop();
+
+						if (poppedState is IPlayerStateStacked poppedStackedState) {
+							poppedStackedState.RemovedFromStateStack();
+						}
+					}
 				}
 
 				if (stackAction == StackAction.ReplaceTop && m_StackedStates.Count > 0) {
-					m_StackedStates.Pop();
+					IPlayerState poppedState = m_StackedStates.Pop();
+
+					if (poppedState is IPlayerStateStacked poppedStackedState) {
+						poppedStackedState.RemovedFromStateStack();
+					}
 				}
 
 				m_StackedStates.Push(state);
+				if (state is IPlayerStateStacked pushedStackedState) {
+					pushedStackedState.AddedToStateStack();
+				}
 
 				OnEnteringState();
 				CurrentState.EnterState(Context);
