@@ -38,6 +38,8 @@ namespace DevLocker.GFrame.Input.UIScope
 			Grid,
 			Horizontal,
 			Vertical,
+			HorizontalAlongAxis,
+			VerticalAlongAxis,
 		}
 
 		[Serializable]
@@ -87,6 +89,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		[Tooltip("Scan for added or removed selectables on Update(). If disabled, call methods manually on change.\nNOTE: Changing positions of selectables will always require manual notification.")]
 		public bool AutoScanForSelectables = true;
 
+		[Tooltip("Navigation pattern to use. \"Along Axis\" includes everything in the axis general direction, instead of Unity default algorithm (useful for jagged horizontal/vertical setup).")]
 		public NavigationMode Navigation = NavigationMode.Grid;
 
 		[Tooltip("Skip navigation wrapping if last move happened sooner than this threshold. Useful for stopping continues navigation before user wraps away the current group. 0 will not skip anything. 0.5 is a good value.")]
@@ -425,10 +428,10 @@ namespace DevLocker.GFrame.Input.UIScope
 				//
 				// https://docs.unity3d.com/Packages/com.unity.ugui@1.0/api/UnityEngine.UI.Selectable.html#UnityEngine_UI_Selectable_FindSelectable_UnityEngine_Vector3_
 				// Don't use FindSelectableOn*() as it won't work if "Explicit" mode set.
-				nav.selectOnUp = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Vertical) ? FindManagedSelectable(selectable, Vector3.up) : null;
-				nav.selectOnDown = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Vertical) ? FindManagedSelectable(selectable, Vector3.down) : null;
-				nav.selectOnLeft = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Horizontal) ? FindManagedSelectable(selectable, Vector3.left) : null;
-				nav.selectOnRight = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Horizontal) ? FindManagedSelectable(selectable, Vector3.right) : null;
+				nav.selectOnUp = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Vertical || Navigation == NavigationMode.VerticalAlongAxis) ? FindManagedSelectable(selectable, Vector3.up) : null;
+				nav.selectOnDown = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Vertical || Navigation == NavigationMode.VerticalAlongAxis) ? FindManagedSelectable(selectable, Vector3.down) : null;
+				nav.selectOnLeft = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Horizontal || Navigation == NavigationMode.HorizontalAlongAxis) ? FindManagedSelectable(selectable, Vector3.left) : null;
+				nav.selectOnRight = (Navigation == NavigationMode.Grid || Navigation == NavigationMode.Horizontal || Navigation == NavigationMode.HorizontalAlongAxis) ? FindManagedSelectable(selectable, Vector3.right) : null;
 
 				bool outsideUp = nav.selectOnUp == null;
 				bool outsideDown = nav.selectOnDown == null;
@@ -675,13 +678,64 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		private Selectable FindManagedSelectable(Selectable selectable, Vector3 dir)
 		{
-			// Selectable.FindSelectable() searches only interactable ones.
-			while ((selectable = selectable.FindSelectable(selectable.transform.rotation * dir)) != null) {
-				if (m_ManagedSelectables.Contains(selectable))
-					return selectable;
+			// In case we're using worldspace canvas with arbitrary rotation.
+			// So up will point up according to me and all selectables.
+			dir = selectable.transform.rotation * dir;
+
+			if (Navigation == NavigationMode.HorizontalAlongAxis || Navigation == NavigationMode.VerticalAlongAxis) {
+
+				while ((selectable = FindSelectableAlongAxis(selectable, dir)) != null) {
+					if (m_ManagedSelectables.Contains(selectable))
+						return selectable;
+				}
+
+			} else {
+
+				// Selectable.FindSelectable() searches only interactable ones.
+				while ((selectable = selectable.FindSelectable(dir)) != null) {
+					if (m_ManagedSelectables.Contains(selectable))
+						return selectable;
+				}
 			}
 
 			return null;
+		}
+
+		public Selectable FindSelectableAlongAxis(Selectable selectable, Vector3 dir)
+		{
+			float minDistance = float.MaxValue;
+			Selectable closestSelectable = null;
+
+			foreach(Selectable otherSelectable in Selectable.allSelectablesArray) {
+
+				if (otherSelectable == selectable)
+					continue;
+
+				if (!otherSelectable.IsInteractable() || otherSelectable.navigation.mode == UnityEngine.UI.Navigation.Mode.None)
+					continue;
+
+				// Copy-pasted from Selectable.FindSelectable() with changes in the algorithm.
+#if UNITY_EDITOR
+				// Apart from runtime use, FindSelectable is used by custom editors to
+				// draw arrows between different selectables. For scene view cameras,
+				// only selectables in the same stage should be considered.
+				if (Camera.current != null && !UnityEditor.SceneManagement.StageUtility.IsGameObjectRenderedByCamera(otherSelectable.gameObject, Camera.current))
+					continue;
+#endif
+				Vector3 dist = otherSelectable.transform.position - selectable.transform.position;
+
+				// Skip if in the opposite direction.
+				if (Vector3.Dot(dir, dist.normalized) < 0)
+					continue;
+
+				Vector3 projectedDist = Vector3.Project(dist, dir);
+				if (projectedDist.sqrMagnitude < minDistance) {
+					closestSelectable = otherSelectable;
+					minDistance = projectedDist.sqrMagnitude;
+				}
+			}
+
+			return closestSelectable;
 		}
 
 		private void RecordEdgeSelectable(GameObject go, MoveDirection direction)
