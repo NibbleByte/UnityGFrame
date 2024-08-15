@@ -84,6 +84,25 @@ namespace DevLocker.GFrame.Input.UIScope
 			SetSelectedValueClamped(value, sendCallback: true);
 		}
 
+		public void SelectNextOptionForceWrap()
+		{
+			int value = m_SelectedValue + Step;
+			while (value > MaxValue && MaxValue > MinValue) {
+				value -= WorkingRange;
+			}
+			SetSelectedValueClamped(value, sendCallback: true);
+		}
+
+		public void SelectPrevOptionForceWrap()
+		{
+			int value = m_SelectedValue - Step;
+			while (value < MinValue && MaxValue > MinValue) {
+				value += WorkingRange;
+			}
+
+			SetSelectedValueClamped(value, sendCallback: true);
+		}
+
 		public void SetSelectedValueWithoutNotify(int value)
 		{
 			SetSelectedValueClamped(value, false);

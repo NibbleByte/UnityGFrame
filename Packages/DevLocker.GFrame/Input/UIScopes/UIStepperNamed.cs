@@ -86,6 +86,22 @@ namespace DevLocker.GFrame.Input.UIScope
 			SetSelectedIndexClamped(index, sendCallback: true);
 		}
 
+		public void SelectNextOptionForceWrap()
+		{
+			int index = (m_SelectedIndex + 1) % m_Options.Length;
+			SetSelectedIndexClamped(index, sendCallback: true);
+		}
+
+		public void SelectPrevOptionForceWrap()
+		{
+			int index = m_SelectedIndex - 1;
+			if (index < 0) {
+				index += m_Options.Length;
+			}
+
+			SetSelectedIndexClamped(index, sendCallback: true);
+		}
+
 		public void SetSelectedIndexWithoutNotify(int index)
 		{
 			SetSelectedIndexClamped(index, false);
