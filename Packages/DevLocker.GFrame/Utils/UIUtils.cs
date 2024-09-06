@@ -86,6 +86,9 @@ namespace DevLocker.GFrame.Utils
 		public static bool IsLayoutRebuildPendingUnder(Transform root)
 		{
 			foreach(Component element in GetPendingLayoutRebuildElements().OfType<Component>()) {
+				if (element == null)
+					continue;
+
 				Transform elementTransform = element.transform;
 				if (elementTransform == root || elementTransform.IsChildOf(root))
 					return true;
