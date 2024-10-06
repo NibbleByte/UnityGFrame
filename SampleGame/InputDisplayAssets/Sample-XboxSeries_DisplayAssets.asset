@@ -1,0 +1,122 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c98b4e3b4197014e8fddf9a9eef0e34, type: 3}
+  m_Name: Sample-XboxSeries_DisplayAssets
+  m_EditorClassIdentifier: 
+  DeviceName: Xbox One Controller
+  DeviceIcon: {fileID: 0}
+  DeviceIconSmall: {fileID: 0}
+  DeviceColor: {r: 0.5137255, g: 0.90588236, b: 0.3137255, a: 1}
+  FallbackToDefaultDisplayTexts: 1
+  m_SupportsUINavigationSelection: 1
+  FormatBindingTexts: 
+  FormatBindingSprites: 
+  MatchingControlScheme: Gamepad
+  MatchingDeviceLayouts:
+  - XInputControllerWindows
+  BindingDisplays:
+  - BindingPath: <Gamepad>/buttonSouth
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_A">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/buttonEast
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_B">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/buttonWest
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_X">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/buttonNorth
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Y">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/dpad
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Dpad">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/dpad/up
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Dpad_Up">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/dpad/down
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Dpad_Down">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/dpad/left
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Dpad_Left">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/dpad/right
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Dpad_Right">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/leftStick
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Left_Stick">
+    DisplayShortText: 
+  - BindingPath: Left Stick
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Left_Stick">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/leftStickPress
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Left_Stick">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/rightStick
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Right_Stick">
+    DisplayShortText: 
+  - BindingPath: Right Stick
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Right_Stick">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/rightStickPress
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Right_Stick">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/select
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_View">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/start
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_Menu">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/leftShoulder
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_LB">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/rightShoulder
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_RB">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/leftTrigger
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_LT">
+    DisplayShortText: 
+  - BindingPath: <Gamepad>/rightTrigger
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_RT">
+    DisplayShortText: 
+  - BindingPath: '*/{Submit}'
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_A">
+    DisplayShortText: 
+  - BindingPath: '*/{Back}'
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_B">
+    DisplayShortText: 
+  - BindingPath: '*/{Cancel}'
+    UseDefaultTexts: 0
+    DisplayText: <sprite="GFrame_Xbox_Series_SpriteAsset" name="GFrame_XboxSeriesX_B">
+    DisplayShortText: 
