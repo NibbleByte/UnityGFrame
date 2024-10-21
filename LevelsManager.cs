@@ -42,6 +42,12 @@ namespace DevLocker.GFrame
 		public event Action LoadingSupervisor;
 		public event Action LoadedSupervisor;
 
+		/// <summary>
+		/// Will be called after level was loaded and loading screen transition finished.
+		/// Will be called once, then all subscribers be removed - no need to unsubscribe.
+		/// </summary>
+		public event Action LevelLoadedAndShownCallOnce;
+
 		protected virtual void Update()
 		{
 			if (LevelSupervisor is IUpdateListener updateSupervisor) {
@@ -207,6 +213,9 @@ namespace DevLocker.GFrame
 
 				await LoadedSupervisorAsync();
 
+				LevelLoadedAndShownCallOnce?.Invoke();
+				LevelLoadedAndShownCallOnce = null;
+
 				ChangingLevel = false;
 			}
 			catch (Exception ex) {
@@ -351,6 +360,9 @@ namespace DevLocker.GFrame
 			}
 
 			yield return LoadedSupervisorCrt();
+
+			LevelLoadedAndShownCallOnce?.Invoke();
+			LevelLoadedAndShownCallOnce = null;
 
 			ChangingLevel = false;
 

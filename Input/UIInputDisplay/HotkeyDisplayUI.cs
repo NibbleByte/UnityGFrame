@@ -1,5 +1,4 @@
 #if USE_INPUT_SYSTEM
-using DevLocker.GFrame.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -270,6 +269,16 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				m_LayoutElement.ignoreLayout = !Text.enabled;
 			}
 			SetAdditionalObjects(Text.enabled);
+		}
+
+		protected virtual void Reset()
+		{
+			var hotkey = GetComponentInParent<UIScope.HotkeyBaseScopeElement>(true);
+			if (hotkey) {
+				m_InputAction = hotkey.InputAction;
+			}
+
+			Text = GetComponent<TMPro.TextMeshProUGUI>();
 		}
 
 		protected virtual void Awake()
