@@ -75,6 +75,9 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		private List<CanvasGroup> m_CanvasGroups = new List<CanvasGroup>();
 
+		// What was the selected object when I enabled.
+		private GameObject m_SelectedObjectOnEnable;
+
 		// Used for multiple event systems (e.g. split screen).
 		protected IPlayerContext m_PlayerContext;
 
@@ -195,6 +198,8 @@ namespace DevLocker.GFrame.Input.UIScope
 			m_PersistedSelectable = null;
 			m_PersistedSelection = null;
 
+			m_SelectedObjectOnEnable = null;
+
 			m_CanvasGroups = null;
 			m_PlayerContext = null;
 		}
@@ -205,6 +210,8 @@ namespace DevLocker.GFrame.Input.UIScope
 				return;
 
 			IsSelectRequested = true;
+
+			m_SelectedObjectOnEnable = m_PlayerContext.SelectedGameObject;
 
 			s_ActiveInstances.TryGetValue(m_PlayerContext.GetRootObject(), out List<SelectionController> activeInstances);
 			if (activeInstances == null) {
@@ -287,6 +294,11 @@ namespace DevLocker.GFrame.Input.UIScope
 #endif
 
 				IsSelectRequested = false;
+
+				// If user changed selection during my select request don't override their choice (unless it's outside the my scope).
+				if (m_SelectedObjectOnEnable != m_PlayerContext.SelectedGameObject && m_PlayerContext.SelectedGameObject && m_PlayerContext.SelectedGameObject.activeInHierarchy)
+					if (!TrackOnlyChildren || m_PlayerContext.SelectedGameObject.transform.IsChildOf(transform))
+						return;
 
 				GameObject targetSelection = (PersistentSelection > 0 && m_PersistedIsAvailable)
 					? m_PersistedSelection
