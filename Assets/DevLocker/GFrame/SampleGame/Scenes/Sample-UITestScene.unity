@@ -52225,6 +52225,8 @@ MonoBehaviour:
     m_Right: 20
     m_Top: 20
     m_Bottom: 20
+  Easing: 5
+  EasingDuration: 0.5
 --- !u!114 &2145263968
 MonoBehaviour:
   m_ObjectHideFlags: 0

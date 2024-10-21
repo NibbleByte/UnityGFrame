@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,15 +10,29 @@ namespace DevLocker.GFrame.Input.UIScope
 	/// </summary>
 	public class ScrollWithSelected : MonoBehaviour
 	{
+		public enum EasingType
+		{
+			SnapInstant,
+			Linear,
+			OutQuad,
+			OutQuart,
+			OutQuint,
+			OutExpo,
+		}
+
 		public ScrollRect ScrollRect;
 
 		[Tooltip("Margin when snapping")]
 		public RectOffset Margin;
 
+		public EasingType Easing = EasingType.OutExpo;
+		public float EasingDuration = 0.5f;
+
 		// Used for multiple event systems (e.g. split screen).
 		protected IPlayerContext m_PlayerContext;
 
 		private GameObject m_LastSelectedObject;
+		private Coroutine m_EaseCoroutine;
 
 
 		void Reset()
@@ -45,8 +58,40 @@ namespace DevLocker.GFrame.Input.UIScope
 				m_LastSelectedObject = m_PlayerContext.SelectedGameObject;
 
 				if (m_LastSelectedObject && m_LastSelectedObject.transform.IsChildOf(ScrollRect.transform)) {
-					KeepChildInScrollViewport(ScrollRect, m_LastSelectedObject.GetComponent<RectTransform>(), Margin);
+					ScrollToChild(m_LastSelectedObject.GetComponent<RectTransform>(), useEasing: true);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Scroll so the provided child is in view.
+		/// </summary>
+		/// <param name="useEasing">Should easing be used or snap instantly.</param>
+		public void ScrollToChild(RectTransform child, bool useEasing = true)
+		{
+			if (m_EaseCoroutine != null) {
+				StopCoroutine(m_EaseCoroutine);
+			}
+
+			Vector3 scrollDelta = KeepChildInScrollViewportDelta(ScrollRect, child, Margin);
+
+			if (scrollDelta.magnitude <= 0.001f)
+				return;
+
+			if (Easing == EasingType.SnapInstant || !useEasing) {
+				ScrollRect.content.localPosition += scrollDelta;
+			} else {
+				Func<float, float> easeFunc = Easing switch {
+					EasingType.SnapInstant => null,
+					EasingType.Linear => Linear,
+					EasingType.OutQuad => OutQuad,
+					EasingType.OutQuart => OutQuart,
+					EasingType.OutQuint => OutQuint,
+					EasingType.OutExpo => OutExpo,
+					_ => throw new NotImplementedException(),
+				};
+
+				m_EaseCoroutine = StartCoroutine(EaseScrollCrt(ScrollRect.content.localPosition, ScrollRect.content.localPosition + scrollDelta, easeFunc));
 			}
 		}
 
@@ -54,6 +99,14 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// Move scroll so child is in view, if it isn't already.
 		/// </summary>
 		public static void KeepChildInScrollViewport(ScrollRect scrollRect, RectTransform child, RectOffset margin = null)
+		{
+			scrollRect.content.localPosition += KeepChildInScrollViewportDelta(scrollRect, child, margin);
+		}
+
+		/// <summary>
+		/// Delta position to add to the <see cref="ScrollRect.content"/> local position so the child will be in view, if it isn't already.
+		/// </summary>
+		public static Vector3 KeepChildInScrollViewportDelta(ScrollRect scrollRect, RectTransform child, RectOffset margin = null)
 		{
 			Canvas.ForceUpdateCanvases();
 
@@ -89,7 +142,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			// Transform the move vector to world space, then to content local space (in case of scaling or rotation?) and apply it.
 			Vector3 worldMove = scrollRect.viewport.TransformDirection(move);
-			scrollRect.content.localPosition -= scrollRect.content.InverseTransformDirection(worldMove);
+			return -1 * scrollRect.content.InverseTransformDirection(worldMove);
 		}
 
 
@@ -121,5 +174,40 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			scrollRect.content.localPosition = result;
 		}
+
+
+		private IEnumerator EaseScrollCrt(Vector3 scrollStart, Vector3 scrollEnd, Func<float, float> easeFunc)
+		{
+			Vector3 dist = scrollEnd - scrollStart;
+
+			float easeTime = 0;
+			while (easeTime < EasingDuration) {
+				yield return null;
+
+				easeTime += Time.unscaledDeltaTime;
+				ScrollRect.content.localPosition = scrollStart + dist * easeFunc(easeTime / EasingDuration);
+			}
+
+			ScrollRect.content.localPosition = scrollEnd;
+			m_EaseCoroutine = null;
+		}
+
+		#region Ease Functions
+
+		private static float Linear(float t) => t;
+
+		private static float InQuad(float t) => t * t;
+		private static float OutQuad(float t) => 1 - InQuad(1 - t);
+
+		private static float InQuart(float t) => t * t * t * t;
+		private static float OutQuart(float t) => 1 - InQuart(1 - t);
+
+		private static float InQuint(float t) => t * t * t * t * t;
+		private static float OutQuint(float t) => 1 - InQuint(1 - t);
+
+		private static float InExpo(float t) => (float)Math.Pow(2, 10 * (t - 1));
+		private static float OutExpo(float t) => 1 - InExpo(1 - t);
+
+		#endregion
 	}
 }
