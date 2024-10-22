@@ -32,7 +32,7 @@ namespace DevLocker.GFrame
 		/// Is level currently changing. Can't start another change while this is true.
 		/// Initially set to true as there is no level loaded and it is expected to load.
 		/// </summary>
-		public bool ChangingLevel { get; private set; } = true;
+		public bool IsChangingLevel { get; private set; } = true;
 
 		// Listen for supervisor change.
 		// NOTE: avoid using events with more complex logic as it will blow up in your face.
@@ -155,11 +155,11 @@ namespace DevLocker.GFrame
 
 		public async void SwitchLevelAsync(ILevelSupervisor nextLevel)
 		{
-			if (ChangingLevel && LevelSupervisor != null) {
+			if (IsChangingLevel && LevelSupervisor != null) {
 				throw new InvalidOperationException($"Level is already changing. Can't switch to {nextLevel} while change is in progress.");
 			}
 
-			ChangingLevel = true;
+			IsChangingLevel = true;
 			ILevelSupervisor prevLevel = LevelSupervisor;
 
 			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
@@ -216,10 +216,10 @@ namespace DevLocker.GFrame
 				LevelLoadedAndShownCallOnce?.Invoke();
 				LevelLoadedAndShownCallOnce = null;
 
-				ChangingLevel = false;
+				IsChangingLevel = false;
 			}
 			catch (Exception ex) {
-				ChangingLevel = false;
+				IsChangingLevel = false;
 
 				if (!OnException(prevLevel, nextLevel, ex)) {
 					throw;
@@ -290,7 +290,7 @@ namespace DevLocker.GFrame
 		/// </summary>
 		public void RestartChangingLevelFlag()
 		{
-			ChangingLevel = false;
+			IsChangingLevel = false;
 
 			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
 				playerContext.IsLevelLoading = false;
@@ -304,13 +304,13 @@ namespace DevLocker.GFrame
 
 		public IEnumerator SwitchLevelCrt(ILevelSupervisor nextLevel)
 		{
-			if (ChangingLevel && LevelSupervisor != null) {
+			if (IsChangingLevel && LevelSupervisor != null) {
 				throw new InvalidOperationException($"Level is already changing. Can't switch to {nextLevel} while change is in progress.");
 			}
 
 			// If exception happens in some of the coroutines, flag will remain set forever.
 			// Use the RestartChangingLevelFlag() to restore it and switch back to fall-back level.
-			ChangingLevel = true;
+			IsChangingLevel = true;
 
 			bool hadPreviousSupervisor = false;
 
@@ -364,7 +364,7 @@ namespace DevLocker.GFrame
 			LevelLoadedAndShownCallOnce?.Invoke();
 			LevelLoadedAndShownCallOnce = null;
 
-			ChangingLevel = false;
+			IsChangingLevel = false;
 
 			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
 				playerContext.IsLevelLoading = false;
