@@ -29,6 +29,11 @@ namespace DevLocker.GFrame
 		public ILevelSupervisor LevelSupervisor { get; private set; }
 
 		/// <summary>
+		/// When changing levels, this property provides the next level supervisor, during the process.
+		/// </summary>
+		public ILevelSupervisor NextLevelSupervisor { get; private set; }
+
+		/// <summary>
 		/// Is level currently changing. Can't start another change while this is true.
 		/// Initially set to true as there is no level loaded and it is expected to load.
 		/// </summary>
@@ -160,6 +165,7 @@ namespace DevLocker.GFrame
 			}
 
 			IsChangingLevel = true;
+			NextLevelSupervisor = nextLevel;
 			ILevelSupervisor prevLevel = LevelSupervisor;
 
 			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
@@ -217,9 +223,11 @@ namespace DevLocker.GFrame
 				LevelLoadedAndShownCallOnce = null;
 
 				IsChangingLevel = false;
+				NextLevelSupervisor = null;
 			}
 			catch (Exception ex) {
 				IsChangingLevel = false;
+				NextLevelSupervisor = null;
 
 				if (!OnException(prevLevel, nextLevel, ex)) {
 					throw;
@@ -291,6 +299,7 @@ namespace DevLocker.GFrame
 		public void RestartChangingLevelFlag()
 		{
 			IsChangingLevel = false;
+			NextLevelSupervisor = null;
 
 			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
 				playerContext.IsLevelLoading = false;
@@ -311,6 +320,7 @@ namespace DevLocker.GFrame
 			// If exception happens in some of the coroutines, flag will remain set forever.
 			// Use the RestartChangingLevelFlag() to restore it and switch back to fall-back level.
 			IsChangingLevel = true;
+			NextLevelSupervisor = nextLevel;
 
 			bool hadPreviousSupervisor = false;
 
@@ -365,6 +375,7 @@ namespace DevLocker.GFrame
 			LevelLoadedAndShownCallOnce = null;
 
 			IsChangingLevel = false;
+			NextLevelSupervisor = null;
 
 			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
 				playerContext.IsLevelLoading = false;

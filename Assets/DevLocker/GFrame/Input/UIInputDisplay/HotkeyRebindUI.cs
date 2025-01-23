@@ -83,8 +83,8 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 			m_RebindOperation.OnMatchWaitForAnother(WaitSecondsOnMatch);
 
-			foreach (var excluded in IncludeRebindsTo) {
-				m_RebindOperation.WithControlsHavingToMatchPath(excluded);
+			foreach (var include in IncludeRebindsTo) {
+				m_RebindOperation.WithControlsHavingToMatchPath(include);
 			}
 
 			foreach (var excluded in ExcludeRebindsTo) {
@@ -131,7 +131,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				return;
 
 			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction.name);
-			InputActionRebindingExtensions.RemoveBindingOverride(action, DisplayUI.CurrentlyDisplayedData.BindingIndex);
+			action.RemoveBindingOverride(DisplayUI.CurrentlyDisplayedData.BindingIndex);
 
 			DisplayUI.RefreshDisplay();
 			RebindReset.Invoke();
