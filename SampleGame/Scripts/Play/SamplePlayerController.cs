@@ -52,7 +52,12 @@ namespace DevLocker.GFrame.SampleGame.Play
 
 		public void JumperJump()
 		{
-			if (Mathf.Abs(m_Rigidbody.velocity.y - 0f) < 0.01f) {
+#if UNITY_6000_0_OR_NEWER
+			float velocityY = m_Rigidbody.linearVelocity.y;
+#else
+			float velocityY = m_Rigidbody.velocity.y;
+#endif
+			if (Mathf.Abs(velocityY - 0f) < 0.01f) {
 				m_Rigidbody.AddForce(Vector3.up * JumperJumpForce, ForceMode.Impulse);
 			}
 		}

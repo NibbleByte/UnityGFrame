@@ -14,6 +14,9 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 	/// <summary>
 	/// Attach this component next to <see cref="TextMeshProUGUI"/> and it will replace and update any displayed InputActions in the text.
 	/// Input actions should be surrounded by curly braces: {Jump}
+	/// You can also specify which binding to use (if multiple are present) and which part (if it is composite, e.g. axis)
+	///	by separating the zero based numbers with | character: {Jump|1|2}
+	///
 	/// Text changes by other code are automatically detected and refreshed.
 	/// </summary>
 	[RequireComponent(typeof(TextMeshProUGUI))]
@@ -23,6 +26,10 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		{
 			public string OriginalText;
 			public string DisplayText;
+			public InputAction Action;
+
+			public int BindingNumberToUse;
+			public int CompositePartNumberToUse;
 		}
 
 		[Tooltip("Disable the text mesh pro component if input action for the current device is unavailable.\nIf layout element is present on this object, it will set it to ignore the layout as well.")]
@@ -34,13 +41,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		[Tooltip("(Optional) Format selected binding display text if it contains sprites.\n\"{binding}\" will be replaced with the binding display text.")]
 		public string FormatBindingSprites = "";
 
-		private static Regex s_ActionPattern = new Regex(@"{[\w]+}");
+		private static Regex s_ActionPattern = new Regex(@"\{[\w\d]+(\|\d+){0,2}\}");
 
 		private TextMeshProUGUI m_Text;
 		private LayoutElement m_LayoutElement;
 		private bool m_ChangingText = false;
-		private Dictionary<InputAction, OwnedAction> m_ManagedActions = new Dictionary<InputAction, OwnedAction>();
-		private List<InputAction> m_RemoveDictionaryCache = new List<InputAction>();
+		private Dictionary<string, OwnedAction> m_ManagedActions = new Dictionary<string, OwnedAction>();
+		private List<string> m_RemoveDictionaryCache = new List<string>();
 
 		private IInputBindingDisplayDataProvider m_LastDisplayDataProvider;
 
@@ -121,22 +128,21 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (m_LastDisplayDataProvider != null && m_LastDisplayDataProvider != currentProvider) {
 
 				foreach(var pair in m_ManagedActions) {
-					InputAction action = pair.Key;
 
 					// Text could have changed in the mean time so our doing was overwritten.
 					string lastDisplayText = pair.Value.DisplayText;
 					if (!text.Contains(lastDisplayText) || string.IsNullOrEmpty(lastDisplayText)) {
-						m_RemoveDictionaryCache.Add(action);
+						m_RemoveDictionaryCache.Add(pair.Key);
 						continue;
 					}
 
-					string currentDisplayText = GetDisplayTextFor(action, currentProvider);
+					string currentDisplayText = GetDisplayTextFor(pair.Value.Action, currentProvider, pair.Value.BindingNumberToUse, pair.Value.CompositePartNumberToUse);
 
 					// If new provider doesn't have visuals for this binding, restore the initial text.
 					if (string.IsNullOrEmpty(currentDisplayText)) {
 						currentDisplayText = pair.Value.OriginalText;
 						shouldHideText = true;
-						m_RemoveDictionaryCache.Add(action);
+						m_RemoveDictionaryCache.Add(pair.Key);
 					}
 
 					pair.Value.DisplayText = currentDisplayText;
@@ -144,8 +150,8 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 					hasChanges = true;
 				}
 
-				foreach(InputAction action in m_RemoveDictionaryCache) {
-					m_ManagedActions.Remove(action);
+				foreach(string originalText in m_RemoveDictionaryCache) {
+					m_ManagedActions.Remove(originalText);
 				}
 				m_RemoveDictionaryCache.Clear();
 			}
@@ -179,15 +185,34 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 				// Remove the curly braces {}
 				string actionName = match.Value.Substring(1, match.Value.Length - 2);
+				int bindingNumberToUse = 0;
+				int compositePartNumberToUse = 0;
+				if (actionName.Contains('|')) {
+					var matchArgs = actionName.Split('|', StringSplitOptions.RemoveEmptyEntries);
+
+					actionName = matchArgs[0];
+
+					if (!int.TryParse(matchArgs[1], out bindingNumberToUse)) {
+						Debug.LogError($"Invalid second parameter used for bindingNumberToUse in \"{match.Value}\", part of the text:\n{text}");
+					}
+
+					if (matchArgs.Length > 2 && !int.TryParse(matchArgs[2], out compositePartNumberToUse)) {
+						Debug.LogError($"Invalid third parameter used for compositePartNumberToUse in \"{match.Value}\", part of the text:\n{text}");
+					}
+				}
+
 				InputAction action = m_PlayerContext.InputContext.FindActionFor(actionName);
 
-				string displayText = GetDisplayTextFor(action, currentProvider);
+				string displayText = GetDisplayTextFor(action, currentProvider, bindingNumberToUse, compositePartNumberToUse);
 				if (!string.IsNullOrEmpty(displayText)) {
 
-					if (!m_ManagedActions.ContainsKey(action)) {
-						m_ManagedActions.Add(action, new OwnedAction() {
+					if (!m_ManagedActions.ContainsKey(match.Value)) {
+						m_ManagedActions.Add(match.Value, new OwnedAction() {
 							OriginalText = match.Value,
-							DisplayText = displayText
+							DisplayText = displayText,
+							Action = action,
+							BindingNumberToUse = bindingNumberToUse,
+							CompositePartNumberToUse = compositePartNumberToUse,
 						});
 					}
 					replaced.Append(displayText);
@@ -209,10 +234,29 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			m_ChangingText = false;
 		}
 
-		private string GetDisplayTextFor(InputAction action, IInputBindingDisplayDataProvider displayDataProvider)
+		private string GetDisplayTextFor(InputAction action, IInputBindingDisplayDataProvider displayDataProvider, int bindingNumberToUse, int compositePartNumberToUse)
 		{
-			// Consider only the first binding match.
-			InputBindingDisplayData displayData = displayDataProvider.GetBindingDisplaysFor(action).FirstOrDefault();
+			int count = 0;
+			var displayData = new InputBindingDisplayData();
+
+			foreach (var bindingDisplay in displayDataProvider.GetBindingDisplaysFor(action)) {
+				if (count == bindingNumberToUse) {
+
+					if (compositePartNumberToUse == 0) {
+						displayData = bindingDisplay;
+					} else if (compositePartNumberToUse - 1 < bindingDisplay.CompositeBindingParts.Count) {
+						displayData = bindingDisplay.CompositeBindingParts[compositePartNumberToUse - 1];
+					}
+
+					break;
+				}
+				count++;
+			}
+
+			if (!displayData.IsValid && !HideTextIfBindingUnavailable) {
+				displayData = displayDataProvider.GetBindingDisplaysFor(action).LastOrDefault();
+			}
+
 			if (!displayData.IsValid)
 				return string.Empty;
 

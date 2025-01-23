@@ -85,8 +85,9 @@ namespace DevLocker.GFrame.Utils
 		/// </summary>
 		public static bool IsLayoutRebuildPendingUnder(Transform root)
 		{
-			foreach(Component element in GetPendingLayoutRebuildElements().OfType<Component>()) {
-				if (element == null)
+			// ICanvasElement can be normal component or LayoutRebuilder.
+			foreach(ICanvasElement element in GetPendingLayoutRebuildElements()) {
+				if (element == null || element.IsDestroyed())
 					continue;
 
 				Transform elementTransform = element.transform;
