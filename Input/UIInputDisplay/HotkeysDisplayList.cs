@@ -45,7 +45,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				if (hotkey == null)
 					continue;
 
-				bool actionEnabled = m_PlayerContext.IsActive && (m_PlayerContext.InputContext?.FindActionFor(hotkey.InputAction.name)?.enabled ?? false);
+				bool actionEnabled = m_PlayerContext.IsActive && (m_PlayerContext.InputContext?.FindActionFor(hotkey.InputAction)?.enabled ?? false);
 				if (actionEnabled != hotkey.gameObject.activeSelf) {
 					hotkey.gameObject.SetActive(actionEnabled);
 					hasChanges = true;

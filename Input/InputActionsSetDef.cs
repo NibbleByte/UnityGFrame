@@ -40,7 +40,7 @@ namespace DevLocker.GFrame.Input
 					}
 #endif
 
-					InputAction action = inputContext.FindActionFor(actionFromAsset.name);
+					InputAction action = inputContext.FindActionFor(actionFromAsset.id);
 
 					// Context references may be different? No? Too late to check.
 					if (action != null) {
@@ -61,7 +61,7 @@ namespace DevLocker.GFrame.Input
 					}
 #endif
 
-					InputAction action = inputContext.FindActionFor(actionReference.name);
+					InputAction action = inputContext.FindActionFor(actionReference);
 					if (action != null) {
 						yield return action;
 					}

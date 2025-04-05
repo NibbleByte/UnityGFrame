@@ -129,7 +129,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			}
 #endif
 
-			InputAction action = inputContext.FindActionFor(m_InputAction.name);
+			InputAction action = inputContext.FindActionFor(m_InputAction);
 			if (action != null) {
 				yield return action;
 			}
@@ -223,7 +223,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				deviceLayout = DisplayMode.DisplayedDeviceLayout;
 			}
 
-			InputAction action = context.FindActionFor(m_InputAction.name);
+			InputAction action = context.FindActionFor(m_InputAction);
 			if (action == null) {
 				Debug.LogError($"[Input] {nameof(HotkeyDisplayUI)} couldn't find specified action {m_InputAction.name} for player {m_PlayerContext.PlayerName}", this);
 				return;
@@ -233,6 +233,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			var displayedData = new InputBindingDisplayData();
 
 			IInputBindingDisplayDataProvider displayDataProvider = context.GetFirstMatchingDisplayDataProvider(deviceLayout);
+
+			// No display asset found for this scheme - abort.
+			// This may happen when you add "VirtualMouse" device that comes with this layout.
+			if (displayDataProvider == null)
+				return;
 
 			foreach (var bindingDisplay in displayDataProvider.GetBindingDisplaysFor(action)) {
 				if (count == BindingNumberToUse) {

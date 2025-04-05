@@ -177,6 +177,47 @@ namespace DevLocker.GFrame.Input
 	public interface IInputContext
 	{
 		/// <summary>
+		/// Specify how input should behave.
+		/// </summary>
+		public struct InputBehaviours
+		{
+
+			/// <summary>
+			/// Allows to have no UI object selected when clicking with the mouse on empty space.
+			/// </summary>
+			public bool AllowEmptyClicksToDeselect;
+
+			/// <summary>
+			/// Should navigation selection persist while using the mouse or should it automatically deselect the object.
+			/// This overrides the <see cref="DeviceSupportsUINavigationSelection"/>, as keyboard and mouse are usually bundled together.
+			/// Use with the <see cref="UIScope.DisableHoverWhenMouseInactive"/>
+			/// </summary>
+			public bool MouseSupportsUINavigationSelection;
+
+			/// <summary>
+			/// Set selected object to none if the current device doesn't support it. E.g. hide selection for mouse & keyboard, but show it for Gamepad.
+			/// Check the device <see cref="InputBindingDisplayAsset"/>.
+			/// </summary>
+			public bool RemoveSelectionIfDeviceDoesntSupportIt;
+
+			public static readonly InputBehaviours Default = new InputBehaviours() {
+				AllowEmptyClicksToDeselect = false,
+				MouseSupportsUINavigationSelection = false,
+				RemoveSelectionIfDeviceDoesntSupportIt = true,
+			};
+		}
+
+		/// <summary>
+		/// Used for overriding the default input behaviour.
+		/// </summary>
+		public enum InputBehaviourOverride { DefaultBehaviour, Enable, Disable }
+
+		/// <summary>
+		/// Specify how input should behave.
+		/// </summary>
+		InputBehaviours DefaultBehaviours { get; }
+
+		/// <summary>
 		/// Last device used got changed.
 		/// </summary>
 		event Action LastUsedDeviceChanged;
@@ -237,9 +278,14 @@ namespace DevLocker.GFrame.Input
 		bool DeviceSupportsUINavigationSelection { get; }
 
 		/// <summary>
-		/// Find InputAction by action name or id.
+		/// Find InputAction by action name or id. In case of duplicate action names, specify the map like this: "map1/action1".
 		/// </summary>
 		InputAction FindActionFor(string actionNameOrId, bool throwIfNotFound = false);
+
+		/// <summary>
+		/// Find InputAction by action id.
+		/// </summary>
+		InputAction FindActionFor(Guid id, bool throwIfNotFound = false);
 
 		/// <summary>
 		/// Enable action via <see cref="InputActionsMaskedStack"/>
@@ -446,7 +492,7 @@ namespace DevLocker.GFrame.Input
 		/// </summary>
 		public static InputAction FindActionFor(this IInputContext context, InputActionReference inputActionReference, bool throwIfNotFound = false)
 		{
-			return context.FindActionFor(inputActionReference.name, throwIfNotFound);
+			return context.FindActionFor(inputActionReference.action.id, throwIfNotFound);
 		}
 
 		/// <summary>
@@ -470,6 +516,13 @@ namespace DevLocker.GFrame.Input
 			return currentDisplayDataProvider.FormatBindingDisplayText(usedText);
 		}
 
+		public static bool FinalValue(this IInputContext.InputBehaviourOverride overrideValue, bool defaultValue)
+			=> overrideValue switch {
+				IInputContext.InputBehaviourOverride.DefaultBehaviour => defaultValue,
+				IInputContext.InputBehaviourOverride.Enable => true,
+				IInputContext.InputBehaviourOverride.Disable => false,
+				_ => throw new NotImplementedException()
+			};
 
 		// ======================================================================== \\
 		// ======================================================================== \\

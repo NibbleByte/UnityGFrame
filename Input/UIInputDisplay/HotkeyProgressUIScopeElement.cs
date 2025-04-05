@@ -230,7 +230,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			}
 #endif
 
-			InputAction action = inputContext.FindActionFor(InputAction.name);
+			InputAction action = inputContext.FindActionFor(InputAction);
 			if (action != null) {
 				yield return action;
 			}

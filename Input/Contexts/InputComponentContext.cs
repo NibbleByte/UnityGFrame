@@ -25,6 +25,8 @@ namespace DevLocker.GFrame.Input.Contexts
 
 		public IReadOnlyCollection<InputAction> UIActions { get; }
 
+		public IInputContext.InputBehaviours DefaultBehaviours { get; }
+
 		/// <summary>
 		/// IMPORTANT2: The LastUsedDeviceChanged event will be invoked only if you've selected the notificationBehavior to be Unity or C# events.
 		///				If you prefer using messages, you'll need to trigger the TriggerLastUsedDeviceChanged() manually when devices change.
@@ -63,8 +65,10 @@ namespace DevLocker.GFrame.Input.Contexts
 			}
 		}
 
-		public InputComponentContext(PlayerInput playerInput, InputActionsMaskedStack inputStack, IEnumerable<IInputBindingDisplayDataProvider> bindingDisplayProviders = null)
+		public InputComponentContext(PlayerInput playerInput, InputActionsMaskedStack inputStack, IInputContext.InputBehaviours defaultBehaviours, IEnumerable<IInputBindingDisplayDataProvider> bindingDisplayProviders = null)
 		{
+			DefaultBehaviours = defaultBehaviours;
+
 			PlayerInput = playerInput;
 
 			// We'll control the input actions.
@@ -135,12 +139,28 @@ namespace DevLocker.GFrame.Input.Contexts
 			// NOTE: can't assign back user the to PlayerInput, but it should be fine, as it should be a valid user - no change in the struct.
 			InputUser.PerformPairingWithDevice(device, User, options);
 			User.AssociateActionsWithUser(PlayerInput.actions);
+
+			// If last device is already paired - do nothing.
+			if (!PairedDevices.Contains(m_LastUsedDevice)) {
+				OnInputSystemEvent(new InputEventPtr(), device);
+			}
 		}
 
 		public void UnpairDevice(InputDevice device)
 		{
+			bool wasUsed = PairedDevices.Contains(device) && device == m_LastUsedDevice;
+
 			if (User.valid) {
 				User.UnpairDevice(device);
+			}
+
+			if (wasUsed) {
+				if (PairedDevices.Any()) {
+					OnInputSystemEvent(new InputEventPtr(), PairedDevices.First());
+				} else {
+					m_LastUsedDevice = null;
+					CacheDisplayData();
+				}
 			}
 		}
 
@@ -149,6 +169,9 @@ namespace DevLocker.GFrame.Input.Contexts
 			UnpairDevices();
 
 			PlayerInput.actions.devices = new ReadOnlyArray<InputDevice>();
+
+			m_LastUsedDevice = null;
+			CacheDisplayData();
 		}
 
 		public void UnpairDevices()
@@ -157,11 +180,24 @@ namespace DevLocker.GFrame.Input.Contexts
 
 			// In case user was paired with "empty" device.
 			PlayerInput.actions.devices = null;
+
+			m_LastUsedDevice = null;
+			CacheDisplayData();
 		}
 
 		public InputAction FindActionFor(string actionNameOrId, bool throwIfNotFound = false)
 		{
 			return PlayerInput ? PlayerInput.actions.FindAction(actionNameOrId, throwIfNotFound) : null;
+		}
+
+		public InputAction FindActionFor(Guid id, bool throwIfNotFound = false)
+		{
+			var action = PlayerInput ? PlayerInput.actions.FindAction(id) : null;
+			if (action == null && throwIfNotFound) {
+				throw new ArgumentException($"No action '{id}' in '{PlayerInput.actions}'");
+			}
+
+			return action;
 		}
 
 		public IEnumerable<InputAction> FindActionsForAllPlayers(string actionNameOrId, bool throwIfNotFound = false)
@@ -299,9 +335,30 @@ namespace DevLocker.GFrame.Input.Contexts
 
 			if (PlayerInput.devices.Contains(device)) {
 
-				// Called when device configuration changes (for example keyboard layout / language), not on switching devices.
-				// Trigger event so UI gets refreshed properly.
-				TriggerLastUsedDeviceChanged();
+				switch (change) {
+					case InputDeviceChange.Added:
+					case InputDeviceChange.Reconnected:
+					case InputDeviceChange.Enabled:
+					case InputDeviceChange.UsageChanged:
+					case InputDeviceChange.ConfigurationChanged:
+
+						// Called when device configuration changes (for example keyboard layout / language), not on switching devices.
+						// Trigger event so UI gets refreshed properly.
+						m_LastUsedDevice = m_ForcedDevice ?? null;  // Make sure doesn't skip same device.
+						OnInputSystemEvent(new InputEventPtr(), device);
+						break;
+				}
+			}
+
+			// Removed devices are not in the devices list.
+			switch (change) {
+				case InputDeviceChange.Removed:
+				case InputDeviceChange.Disabled:
+				case InputDeviceChange.Disconnected:
+					if (m_LastUsedDevice == device) {
+						OnInputSystemEvent(new InputEventPtr(), null);
+					}
+					break;
 			}
 		}
 
@@ -311,7 +368,7 @@ namespace DevLocker.GFrame.Input.Contexts
 			if (m_ForcedDevice != null)
 				return;
 
-			if (m_LastUsedDevice == device || PlayerInput == null || !PlayerInput.devices.Contains(device))
+			if (m_LastUsedDevice == device || PlayerInput == null || (device != null && !PlayerInput.devices.Contains(device)))
 				return;
 
 			// Some devices like to spam events like crazy.

@@ -63,7 +63,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				m_RebindOperation = null;
 			}
 
-			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction.name);
+			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction);
 
 			if (DisplayUI.CurrentlyDisplayedData.Binding.id == Guid.Empty)
 				return;
@@ -130,7 +130,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (DisplayUI.CurrentlyDisplayedData.Binding.id == Guid.Empty)
 				return;
 
-			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction.name);
+			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction);
 			action.RemoveBindingOverride(DisplayUI.CurrentlyDisplayedData.BindingIndex);
 
 			DisplayUI.RefreshDisplay();

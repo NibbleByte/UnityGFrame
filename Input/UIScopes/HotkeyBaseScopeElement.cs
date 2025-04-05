@@ -178,7 +178,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_PlayerContext.IsActive)
 				yield break;
 
-			InputAction action = m_PlayerContext.InputContext.FindActionFor(m_InputAction.name);
+			InputAction action = m_PlayerContext.InputContext.FindActionFor(m_InputAction);
 			if (action.phase != InputActionPhase.Performed) {
 				// Context is the same in all the events - it keeps reference to the state. I think.
 				OnInputCancel(context);
@@ -202,7 +202,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			}
 #endif
 
-			InputAction action = inputContext.FindActionFor(m_InputAction.name);
+			InputAction action = inputContext.FindActionFor(m_InputAction);
 			if (action != null) {
 				yield return action;
 			}

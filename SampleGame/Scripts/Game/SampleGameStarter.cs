@@ -59,7 +59,7 @@ namespace DevLocker.GFrame.SampleGame.Game
 
 			playerInput.uiInputModule = uiInputModule;
 
-			var inputContext = new InputComponentContext(playerInput, new InputActionsMaskedStack(playerControls), BindingDisplayAssets);
+			var inputContext = new InputComponentContext(playerInput, new InputActionsMaskedStack(playerControls), IInputContext.InputBehaviours.Default, BindingDisplayAssets);
 			playerControls.SetInputContext(inputContext);
 
 			PlayerContextUIRootObject.GlobalPlayerContext.SetupGlobal(uiInputModule.GetComponent<EventSystem>(), inputContext);

@@ -4,8 +4,9 @@ namespace DevLocker.GFrame.Utils
 {
 	/// <summary>
 	/// Validation routines.
+	/// HACK: THIS IS COPY-PASTE FROM THE DevLocker.Utils.
 	/// </summary>
-	public static class Validation
+	internal static class Validation
 	{
 		/// <summary>
 		/// Check if UnityObject has been destroyed and log error if it is.
