@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace DevLocker.GFrame.Utils
 {
 	/// <summary>
 	/// UI helper functions.
+	/// HACK: THIS IS COPY-PASTE FROM THE DevLocker.Utils.
 	/// </summary>
-	public static class UIUtils
+	internal static class UIUtils
 	{
 		private static IDictionary s_CanvasesRegister;
 		private static List<ICanvasElement> s_LayoutRebuildList;
+
+		private static List<RaycastResult> m_RayCastResultsCache = new List<RaycastResult>();
 
 		/// <summary>
 		/// Force recalculate content size fitters and layout groups properly - from bottom to top.
@@ -40,6 +44,22 @@ namespace DevLocker.GFrame.Utils
 			if (contentSizeFitter != null) {
 				LayoutRebuilder.ForceRebuildLayoutImmediate(rootTransform);
 			}
+		}
+
+		/// <summary>
+		/// Raycast UI elements at specified position (usually mouse screen position).
+		/// </summary>
+		public static IReadOnlyList<RaycastResult> RaycastUIElements(Vector3 position)
+		{
+			m_RayCastResultsCache.Clear();
+
+			if (EventSystem.current == null)
+				return m_RayCastResultsCache;
+
+			PointerEventData eventData = new PointerEventData(EventSystem.current);
+			eventData.position = position;
+			EventSystem.current.RaycastAll(eventData, m_RayCastResultsCache);
+			return m_RayCastResultsCache;
 		}
 
 		/// <summary>

@@ -35,7 +35,7 @@ namespace DevLocker.GFrame.Input.Contexts
 		public void AddSetupCallback(IPlayerContext.SetupCallbackDelegate setupReadyCallback)
 		{
 			if (PlayerRootObject != null) {
-				PlayerRootObject.AddSetupCallback(m_CallbacksOnSetup);
+				PlayerRootObject.AddSetupCallback(setupReadyCallback);
 			} else {
 				m_CallbacksOnSetup += setupReadyCallback;
 			}

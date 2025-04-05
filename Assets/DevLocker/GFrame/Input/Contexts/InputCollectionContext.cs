@@ -23,6 +23,8 @@ namespace DevLocker.GFrame.Input.Contexts
 
 		public IReadOnlyCollection<InputAction> UIActions { get; }
 
+		public IInputContext.InputBehaviours DefaultBehaviours { get; }
+
 		public event Action LastUsedDeviceChanged;
 
 		public event Action LastUsedInputControlSchemeChanged;
@@ -58,8 +60,10 @@ namespace DevLocker.GFrame.Input.Contexts
 			}
 		}
 
-		public InputCollectionContext(IInputActionCollection2 actionsCollection, IEnumerable<InputAction> uiActions, IEnumerable<IInputBindingDisplayDataProvider> bindingDisplayProviders = null)
+		public InputCollectionContext(IInputActionCollection2 actionsCollection, IEnumerable<InputAction> uiActions, IInputContext.InputBehaviours defaultBehaviours, IEnumerable<IInputBindingDisplayDataProvider> bindingDisplayProviders = null)
 		{
+			DefaultBehaviours = defaultBehaviours;
+
 			InputActionsCollection = actionsCollection;
 
 			InputActionsMaskedStack = new InputActionsMaskedStack(actionsCollection);
@@ -101,12 +105,28 @@ namespace DevLocker.GFrame.Input.Contexts
 		{
 			User = InputUser.PerformPairingWithDevice(device, User, options);
 			User.AssociateActionsWithUser(InputActionsCollection);
+
+			// If last device is already paired - do nothing.
+			if (!PairedDevices.Contains(m_LastUsedDevice)) {
+				OnInputSystemEvent(new InputEventPtr(), device);
+			}
 		}
 
 		public void UnpairDevice(InputDevice device)
 		{
+			bool wasUsed = device == m_LastUsedDevice;
+
 			if (User.valid) {
 				User.UnpairDevice(device);
+			}
+
+			if (wasUsed) {
+				if (PairedDevices.Any()) {
+					OnInputSystemEvent(new InputEventPtr(), PairedDevices.First());
+				} else {
+					m_LastUsedDevice = null;
+					CacheDisplayData();
+				}
 			}
 		}
 
@@ -115,6 +135,9 @@ namespace DevLocker.GFrame.Input.Contexts
 			UnpairDevices();
 
 			InputActionsCollection.devices = new ReadOnlyArray<InputDevice>();
+
+			m_LastUsedDevice = null;
+			CacheDisplayData();
 		}
 
 		public void UnpairDevices()
@@ -125,11 +148,19 @@ namespace DevLocker.GFrame.Input.Contexts
 
 			// In case user was paired with "empty" device.
 			InputActionsCollection.devices = null;
+
+			m_LastUsedDevice = null;
+			CacheDisplayData();
 		}
 
 		public InputAction FindActionFor(string actionNameOrId, bool throwIfNotFound = false)
 		{
 			return InputActionsCollection.FindAction(actionNameOrId, throwIfNotFound);
+		}
+
+		public InputAction FindActionFor(Guid id, bool throwIfNotFound = false)
+		{
+			return InputActionsCollection.FindAction(id.ToString(), throwIfNotFound);
 		}
 
 		public IEnumerable<InputAction> FindActionsForAllPlayers(string actionNameOrId, bool throwIfNotFound = false)
@@ -243,9 +274,30 @@ namespace DevLocker.GFrame.Input.Contexts
 		{
 			if (!User.valid || User.pairedDevices.Contains(device) || User.pairedDevices.Count == 0) {
 
-				// Called when device configuration changes (for example keyboard layout / language), not on switching devices.
-				// Trigger event so UI gets refreshed properly.
-				TriggerLastUsedDeviceChanged();
+				switch(change) {
+					case InputDeviceChange.Added:
+					case InputDeviceChange.Reconnected:
+					case InputDeviceChange.Enabled:
+					case InputDeviceChange.UsageChanged:
+					case InputDeviceChange.ConfigurationChanged:
+
+						// Called when device configuration changes (for example keyboard layout / language), not on switching devices.
+						// Trigger event so UI gets refreshed properly.
+						m_LastUsedDevice = m_ForcedDevice ?? null;	// Make sure doesn't skip same device.
+						OnInputSystemEvent(new InputEventPtr(), device);
+						break;
+				}
+			}
+
+			// Removed devices are not in the devices list?
+			switch (change) {
+				case InputDeviceChange.Removed:
+				case InputDeviceChange.Disabled:
+				case InputDeviceChange.Disconnected:
+					if (m_LastUsedDevice == device) {
+						OnInputSystemEvent(new InputEventPtr(), null);
+					}
+					break;
 			}
 		}
 
@@ -255,7 +307,7 @@ namespace DevLocker.GFrame.Input.Contexts
 			if (m_ForcedDevice != null)
 				return;
 
-			if (m_LastUsedDevice == device || (User.valid && !User.pairedDevices.Contains(device) && User.pairedDevices.Count != 0))
+			if (m_LastUsedDevice == device || (User.valid && device != null && !User.pairedDevices.Contains(device) && User.pairedDevices.Count != 0))
 				return;
 
 			// Some devices like to spam events like crazy.

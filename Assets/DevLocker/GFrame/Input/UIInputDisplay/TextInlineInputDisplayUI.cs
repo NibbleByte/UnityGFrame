@@ -9,6 +9,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace DevLocker.GFrame.Input.UIInputDisplay
 {
 	/// <summary>
@@ -121,6 +125,9 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			}
 
 			var currentProvider = m_PlayerContext.InputContext.GetCurrentDisplayDataProvider();
+			if (currentProvider == null)
+				return;
+
 			string text = m_Text.text;
 			bool hasChanges = false;
 			bool shouldHideText = false;
@@ -290,6 +297,8 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			}
 
 			var currentProvider = m_PlayerContext.InputContext.GetCurrentDisplayDataProvider();
+			if (currentProvider == null)
+				return;
 
 			if (m_LastDisplayDataProvider == null || m_LastDisplayDataProvider != currentProvider) {
 				// NOTE: This will not update on changing keyboard layout/language. Someday...
@@ -298,5 +307,45 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		}
 	}
 
+
+#if UNITY_EDITOR
+	[CustomEditor(typeof(TextInlineInputDisplayUI))]
+	[CanEditMultipleObjects]
+	internal class TextInlineInputDisplayUIEditor : Editor
+	{
+		private bool m_FoldOut = true;
+
+		protected void DrawScriptProperty()
+		{
+			EditorGUI.BeginDisabledGroup(true);
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
+			EditorGUI.EndDisabledGroup();
+		}
+
+		public override void OnInspectorGUI()
+		{
+			serializedObject.Update();
+
+			DrawScriptProperty();
+
+			m_FoldOut = EditorGUILayout.Foldout(m_FoldOut, "Hint");
+			if (m_FoldOut) {
+				EditorGUILayout.HelpBox("Will replace and update any displayed InputActions in the text.\nInput actions should be surrounded by curly braces: {Jump}\n\n" +
+					"You can also specify which binding to use (if multiple are present) and which part (if it is composite, e.g. axis) " +
+					"by separating the zero based numbers with | character in this order: {ActionName|binding index|composite part index}\n" +
+					"{Move|1|3} - will display second binding (0 is first one), second composite part (0 is all parts)", MessageType.Info);
+			}
+
+			EditorGUI.BeginChangeCheck();
+
+			// Will draw any child properties without [HideInInspector] attribute.
+			DrawPropertiesExcluding(serializedObject, "m_Script");
+
+			if (EditorGUI.EndChangeCheck()) {
+				serializedObject.ApplyModifiedProperties();
+			}
+		}
+	}
+#endif
 }
 #endif

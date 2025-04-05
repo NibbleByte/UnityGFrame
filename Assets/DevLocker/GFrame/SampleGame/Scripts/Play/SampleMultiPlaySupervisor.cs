@@ -88,7 +88,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 				eventSystem.gameObject.SetActive(false);
 				eventSystem.gameObject.SetActive(true);
 
-				var inputContext = new InputComponentContext(playerInput, new InputActionsMaskedStack(playerControls), GameObject.FindAnyObjectByType<SampleGameStarter>().BindingDisplayAssets);
+				var inputContext = new InputComponentContext(playerInput, new InputActionsMaskedStack(playerControls), IInputContext.InputBehaviours.Default, GameObject.FindAnyObjectByType<SampleGameStarter>().BindingDisplayAssets);
 				playerControls.SetInputContext(inputContext);
 
 				//

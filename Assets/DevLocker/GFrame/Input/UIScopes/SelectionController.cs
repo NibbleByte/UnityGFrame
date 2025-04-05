@@ -4,8 +4,8 @@ using DevLocker.GFrame.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace DevLocker.GFrame.Input.UIScope
 {
@@ -21,17 +21,24 @@ namespace DevLocker.GFrame.Input.UIScope
 			PersistOnlyIfObjectIsActiveInHierarchy = 4,
 		};
 
-		public enum NoSelectionActionType
-		{
-			DoNothing = 0,
-			SelectStartObject = 4,
-			SelectLastSelectedObject = 8,
-		};
-
 		public enum StartSelectionSourceTypes
 		{
 			Selectables = 0,
 			NavigationGroups = 4,
+		}
+
+		[Serializable]
+		public class ExtraSettingsType
+		{
+			[Tooltip("Should navigation selection persist while using the mouse or should it automatically deselect the object.")]
+			public IInputContext.InputBehaviourOverride MouseSupportsUINavigationSelection;
+			[Tooltip("Set selected object to none if the current device doesn't support it. E.g. hide selection for mouse & keyboard, but show it for Gamepad.\nCheck the device InputBindingDisplayAsset.")]
+			public IInputContext.InputBehaviourOverride RemoveSelectionIfDeviceDoesntSupportIt;
+
+			[Tooltip("Should it consider only selections that are child of this component for persistent or last selected object?")]
+			public bool TrackOnlyChildren = true;
+
+			public bool ClearSelectionOnDisable = true;
 		}
 
 		public StartSelectionSourceTypes StartSelectionSource = StartSelectionSourceTypes.Selectables;
@@ -45,17 +52,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		[Tooltip("Persist selection even if component or object is disabled.")]
 		public PersistSelectionActionType PersistentSelection = PersistSelectionActionType.PersistOnlyIfObjectIsActiveInHierarchy;
 
-		[Tooltip("What should happen if no object is selected (e.g. user mouse-clicks on empty space and selection is lost)? Useful when device does not support UI navigation.")]
-		public NoSelectionActionType NoSelectionAction = NoSelectionActionType.SelectLastSelectedObject;
-
-		[Tooltip("Should it consider only selections that are child of this component for persistent or last selected object?")]
-		public bool TrackOnlyChildren = true;
-
-		[Tooltip("Set selected object to none if the current device doesn't support it. E.g. hide selection for mouse & keyboard, but show it for Gamepad.\nCheck the device InputBindingDisplayAsset.")]
-		[FormerlySerializedAs("RemoveSelectionOnControlSchemeMismatch")]
-		public bool RemoveSelectionIfDeviceDoesntSupportIt = true;
-
-		public bool ClearSelectionOnDisable = true;
+		public ExtraSettingsType ExtraSettings = new ExtraSettingsType();
 
 		private GameObject m_PersistedSelection = null;
 		private Selectable m_PersistedSelectable;	// Not sure if having selected object without selectable component is possible.
@@ -236,7 +233,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				}
 			}
 
-			if (ClearSelectionOnDisable && m_PlayerContext.IsActive) {
+			if (ExtraSettings.ClearSelectionOnDisable && m_PlayerContext.IsActive) {
 				TryClearSelection();
 			}
 
@@ -251,17 +248,25 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_PlayerContext.IsActive || !m_HasInitialized)
 				return;
 
+			bool removeSelectionIfDeviceDoesntSupportIt = false;
 			if (m_PlayerContext.InputContext != null) {
+				removeSelectionIfDeviceDoesntSupportIt = m_PlayerContext.InputContext.DefaultBehaviours.RemoveSelectionIfDeviceDoesntSupportIt;
+				removeSelectionIfDeviceDoesntSupportIt = ExtraSettings.RemoveSelectionIfDeviceDoesntSupportIt.FinalValue(removeSelectionIfDeviceDoesntSupportIt);
+
 				m_ControlSchemeMatched = m_PlayerContext.InputContext.DeviceSupportsUINavigationSelection;
+				if (m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse) {
+					var mouseSupport = m_PlayerContext.InputContext.DefaultBehaviours.MouseSupportsUINavigationSelection;
+					m_ControlSchemeMatched = ExtraSettings.MouseSupportsUINavigationSelection.FinalValue(mouseSupport);
+				}
 			}
 
 			// Wait till clickable to work with selection.
 			if (!IsClickable()) {
-				if (!m_ControlSchemeMatched && RemoveSelectionIfDeviceDoesntSupportIt && m_PlayerContext.SelectedGameObject) {
+				if (!m_ControlSchemeMatched && removeSelectionIfDeviceDoesntSupportIt && m_PlayerContext.SelectedGameObject) {
 					TryClearSelection();
 				}
 
-				if (ClearSelectionOnDisable && m_PlayerContext.SelectedGameObject) {
+				if (ExtraSettings.ClearSelectionOnDisable && m_PlayerContext.SelectedGameObject) {
 					TryClearSelection();
 				}
 
@@ -270,10 +275,10 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			if (IsSelectRequested) {
 
-				if (!TrackOnlyChildren && UIUtils.IsLayoutRebuildPending())
+				if (!ExtraSettings.TrackOnlyChildren && UIUtils.IsLayoutRebuildPending())
 					return;
 
-				if (TrackOnlyChildren && UIUtils.IsLayoutRebuildPendingUnder(transform))
+				if (ExtraSettings.TrackOnlyChildren && UIUtils.IsLayoutRebuildPendingUnder(transform))
 					return;
 
 				// Call this on update, to avoid errors while switching active object (turn on one, turn off another). In the end, only one should be active.
@@ -297,7 +302,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 				// If user changed selection during my select request don't override their choice (unless it's outside the my scope).
 				if (m_SelectedObjectOnEnable != m_PlayerContext.SelectedGameObject && m_PlayerContext.SelectedGameObject && m_PlayerContext.SelectedGameObject.activeInHierarchy)
-					if (!TrackOnlyChildren || m_PlayerContext.SelectedGameObject.transform.IsChildOf(transform))
+					if (!ExtraSettings.TrackOnlyChildren || m_PlayerContext.SelectedGameObject.transform.IsChildOf(transform))
 						return;
 
 				GameObject targetSelection = (PersistentSelection > 0 && m_PersistedIsAvailable)
@@ -336,7 +341,7 @@ namespace DevLocker.GFrame.Input.UIScope
 					Selectable selectable = selectedObject ? selectedObject.GetComponent<Selectable>() : null;
 					if (selectedObject && selectedObject.activeInHierarchy && (selectable == null || selectable.IsInteractable())) {
 
-						if (!TrackOnlyChildren
+						if (!ExtraSettings.TrackOnlyChildren
 							|| selectable && IsInStartSelection(selectable)
 							|| m_PlayerContext.SelectedGameObject.transform.IsChildOf(transform)
 							) {
@@ -372,7 +377,7 @@ namespace DevLocker.GFrame.Input.UIScope
 						DoNoSelectionAction();
 					}
 				} else {
-					if (RemoveSelectionIfDeviceDoesntSupportIt && m_PlayerContext.SelectedGameObject) {
+					if (removeSelectionIfDeviceDoesntSupportIt && m_PlayerContext.SelectedGameObject) {
 						TryClearSelection();
 					}
 				}
@@ -381,25 +386,15 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		private void DoNoSelectionAction()
 		{
-			GameObject startObject = GetStartSelection()?.gameObject; // Null-check is safe.
+			if (m_PlayerContext.InputContext == null)	// Not sure about this.
+				return;
 
-			switch (NoSelectionAction) {
-
-				case NoSelectionActionType.SelectLastSelectedObject:
-					m_PlayerContext.SetSelectedGameObject(m_PersistedIsAvailable ? m_PersistedSelection : startObject);
-					OnSelected();
-					break;
-
-				case NoSelectionActionType.SelectStartObject:
-					m_PlayerContext.SetSelectedGameObject(startObject);
-					OnSelected();
-					break;
-
-				case NoSelectionActionType.DoNothing:
-					break;
-
-				default:
-					throw new System.NotSupportedException(NoSelectionAction.ToString());
+			if (m_PlayerContext.InputContext.DefaultBehaviours.AllowEmptyClicksToDeselect
+				&& m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse) {
+				// Do nothing.
+			} else {
+				GameObject startObject = GetStartSelection()?.gameObject; // Null-check is safe.
+				m_PlayerContext.SetSelectedGameObject(m_PersistedIsAvailable ? m_PersistedSelection : startObject);
 			}
 		}
 
@@ -508,13 +503,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			UnityEditor.EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SelectionController.PersistentSelection)));
 
-			UnityEditor.EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SelectionController.NoSelectionAction)));
-
-			UnityEditor.EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SelectionController.TrackOnlyChildren)));
-
-			UnityEditor.EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SelectionController.RemoveSelectionIfDeviceDoesntSupportIt)));
-
-			UnityEditor.EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SelectionController.ClearSelectionOnDisable)));
+			UnityEditor.EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SelectionController.ExtraSettings)));
 
 			serializedObject.ApplyModifiedProperties();
 		}

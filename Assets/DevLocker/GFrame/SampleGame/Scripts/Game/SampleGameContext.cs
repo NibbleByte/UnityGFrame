@@ -34,6 +34,7 @@ namespace DevLocker.GFrame.SampleGame.Game
 
 		public InputActionsMaskedStack InputActionsMaskedStack => InputContext.InputActionsMaskedStack;
 
+		public IInputContext.InputBehaviours DefaultBehaviours => InputContext.DefaultBehaviours;
 		public InputUser User => InputContext.User;
 		public ReadOnlyArray<InputDevice> PairedDevices => InputContext.PairedDevices;
 
@@ -43,6 +44,7 @@ namespace DevLocker.GFrame.SampleGame.Game
 		public void UnpairDevices() => InputContext.UnpairDevices();
 
 		public InputAction FindActionFor(string actionNameOrId, bool throwIfNotFound = false) => InputContext.FindActionFor(actionNameOrId, throwIfNotFound);
+		public InputAction FindActionFor(Guid id, bool throwIfNotFound = false) => InputContext.FindActionFor(id, throwIfNotFound);
 		public void EnableAction(object source, InputAction action) => InputContext.EnableAction(source, action);
 		public void DisableAction(object source, InputAction action) => InputContext.DisableAction(source, action);
 		public void DisableAll(object source) => InputContext.DisableAll(source);

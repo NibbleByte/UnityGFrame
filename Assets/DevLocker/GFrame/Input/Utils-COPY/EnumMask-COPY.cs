@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -10,8 +9,9 @@ namespace DevLocker.GFrame.Utils
 {
 	/// <summary>
 	/// Display enum as a bit mask drop-down menu in the editor.
+	/// HACK: THIS IS COPY-PASTE FROM THE DevLocker.Utils.
 	/// </summary>
-	public class EnumMaskAttribute : PropertyAttribute
+	internal class EnumMaskAttribute : PropertyAttribute
 	{
 	}
 
