@@ -254,9 +254,21 @@ namespace DevLocker.GFrame.Input.UIScope
 				removeSelectionIfDeviceDoesntSupportIt = ExtraSettings.RemoveSelectionIfDeviceDoesntSupportIt.FinalValue(removeSelectionIfDeviceDoesntSupportIt);
 
 				m_ControlSchemeMatched = m_PlayerContext.InputContext.DeviceSupportsUINavigationSelection;
-				if (m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse) {
+				if (m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse mouse) {
+
 					var mouseSupport = m_PlayerContext.InputContext.DefaultBehaviours.MouseSupportsUINavigationSelection;
-					m_ControlSchemeMatched = ExtraSettings.MouseSupportsUINavigationSelection.FinalValue(mouseSupport);
+					mouseSupport = ExtraSettings.MouseSupportsUINavigationSelection.FinalValue(mouseSupport);
+
+					if (!mouseSupport) {
+
+						// Is dragging some object (for example slider). In that case don't deselect.
+						bool isDragging = mouse.leftButton.isPressed
+							&& m_PlayerContext.SelectedGameObject
+							&& m_PlayerContext.SelectedGameObject.GetComponent<UnityEngine.EventSystems.IDragHandler>() != null
+							;
+
+						m_ControlSchemeMatched = isDragging;
+					}
 				}
 			}
 
