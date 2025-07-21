@@ -45,6 +45,18 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			public string[] ExcludedControlSchemes;
 		}
 
+		[Serializable]
+		public class ExtraSettingsType
+		{
+			public bool UseShortText = true;
+
+			[Tooltip("Enter how the hotkey text should be displayed. Use \"{Hotkey}\" to be replaced with the matched text.\nLeave empty to skip.")]
+			public string FormatText;
+
+			[Tooltip("Should default fallback text be used when no appropriate display data was found?")]
+			public IInputContext.InputBehaviourOverride FallbackToDefaultDisplayTexts;
+		}
+
 		public InputActionReference InputAction => m_InputAction;
 
 		[SerializeField]
@@ -69,11 +81,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		public DisplayModeData DisplayMode;
 
-
-		public bool UseShortText = true;
-
-		[Tooltip("Optional - enter how the hotkey text should be displayed. Use \"{Hotkey}\" to be replaced with the matched text.\nLeave empty to skip.")]
-		public string FormatText;
+		public ExtraSettingsType ExtraSettings = new ExtraSettingsType();
 
 		[Tooltip("Optional - list of objects to be activated when hotkeys are displayed. Useful for labels indicating the result of the action.")]
 		public List<GameObject> AdditionalObjectsToActivate;
@@ -240,12 +248,18 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				return;
 
 			foreach (var bindingDisplay in displayDataProvider.GetBindingDisplaysFor(action)) {
+
 				if (count == BindingNumberToUse) {
 
 					if (CompositePartNumberToUse == 0) {
 						displayedData = bindingDisplay;
 					} else if (CompositePartNumberToUse - 1 < bindingDisplay.CompositeBindingParts.Count) {
 						displayedData = bindingDisplay.CompositeBindingParts[CompositePartNumberToUse - 1];
+					}
+
+					if (displayedData.IsFallback && !ExtraSettings.FallbackToDefaultDisplayTexts.FinalValue(displayDataProvider.FallbackToDefaultDisplayTexts)) {
+						displayedData.ShortText = "";
+						displayedData.Text = "";
 					}
 
 					break;
@@ -257,13 +271,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			CurrentlyDisplayedData = displayedData;
 			DisplaysIcon = false;
 
-			string usedText = UseShortText && !string.IsNullOrWhiteSpace(CurrentlyDisplayedData.ShortText)
+			string usedText = ExtraSettings.UseShortText && !string.IsNullOrWhiteSpace(CurrentlyDisplayedData.ShortText)
 				? CurrentlyDisplayedData.ShortText
 				: CurrentlyDisplayedData.Text
 				;
 
-			if (!string.IsNullOrWhiteSpace(FormatText)) {
-				usedText = FormatText.Replace("{Hotkey}", usedText);
+			if (!string.IsNullOrEmpty(usedText) && !string.IsNullOrWhiteSpace(ExtraSettings.FormatText)) {
+				usedText = ExtraSettings.FormatText.Replace("{Hotkey}", usedText);
 			}
 
 			Text.enabled = CurrentlyDisplayedData.HasText;

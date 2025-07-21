@@ -33,7 +33,10 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		public Color DeviceColor;
 
 		[Tooltip("If one of the action's bindings doesn't have a defined display data in the list below, use the default display name provided by Unity.")]
-		public bool FallbackToDefaultDisplayTexts = true;
+		[SerializeField]
+		[UnityEngine.Serialization.FormerlySerializedAs("FallbackToDefaultDisplayTexts")]
+		private bool m_FallbackToDefaultDisplayTexts = true;
+		public bool FallbackToDefaultDisplayTexts => m_FallbackToDefaultDisplayTexts;
 
 		[Tooltip("Is UI navigation with selected element allowed when this type of device is used?")]
 		[SerializeField]
@@ -147,8 +150,9 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 					bindingDisplay.Binding = binding;
 				}
 
-				if (bindingDisplay.IsValid)
-					yield return bindingDisplay;
+				// The data should always be valid, as we now always fallback to the default texts. The user should decide what to do with the data.
+				//if (bindingDisplay.IsValid)
+				yield return bindingDisplay;
 			}
 		}
 
@@ -202,7 +206,8 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				}
 			}
 
-			if (FallbackToDefaultDisplayTexts) {
+			// Return Fallback
+			{
 				string text;
 				string shortText;
 
@@ -224,12 +229,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 					Binding = binding,
 					BindingIndex = bindingIndex,
 					ControlScheme = MatchingControlScheme,
+					IsFallback = true,
 					Text = text,
 					ShortText = shortText,
 				};
 			}
-
-			return new InputBindingDisplayData() { BindingIndex = -1 };
 		}
 	}
 

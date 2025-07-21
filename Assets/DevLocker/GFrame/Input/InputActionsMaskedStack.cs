@@ -99,7 +99,7 @@ namespace DevLocker.GFrame.Input
 				throw new ArgumentException($"Input action \"{action}\" is not part of the tracked actions.");
 
 			if (enableSources.Count == 0 && action.enabled) {
-				UnityEngine.Debug.LogError($"Trying to enable input action \"{action.name}\" by {source}, but it is already enabled. Some code is enabling input actions without the IInputContext!");
+				UnityEngine.Debug.LogError($"Trying to enable input action \"{action.name}\" by {source}, but it is already enabled. Some code is enabling input actions without the IInputContext!", source as UnityEngine.Object);
 			}
 
 			enableSources.Add(source);
@@ -130,7 +130,7 @@ namespace DevLocker.GFrame.Input
 				throw new ArgumentException($"Input action \"{action}\" is not part of the tracked actions.");
 
 			if (enableSources.Count > 0 && !action.enabled && (m_CurrentActionsMask?.Contains(action) ?? true)) {
-				UnityEngine.Debug.LogError($"Trying to disable input action \"{action.name}\" by {source}, but it is already disabled. Some code is disabling input actions without the IInputContext!");
+				UnityEngine.Debug.LogError($"Trying to disable input action \"{action.name}\" by {source}, but it is already disabled. Some code is disabling input actions without the IInputContext!", source as UnityEngine.Object);
 			}
 
 			enableSources.Remove(source);
