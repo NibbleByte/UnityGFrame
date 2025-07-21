@@ -53,6 +53,10 @@ namespace DevLocker.GFrame.Input
 		/// </summary>
 		public IReadOnlyList<InputBindingDisplayData> CompositeBindingParts;
 
+		/// <summary>
+		/// Does this entry contain fallback texts, as it was not found in the <see cref="IInputBindingDisplayDataProvider"/> list.
+		/// </summary>
+		public bool IsFallback;
 
 		public string Text;
 		public string ShortText;
@@ -80,6 +84,11 @@ namespace DevLocker.GFrame.Input
 	/// </summary>
 	public interface IInputBindingDisplayDataProvider
 	{
+		/// <summary>
+		/// If one of the action's bindings doesn't have a defined display data in the list, use the default display name provided by Unity.
+		/// </summary>
+		bool FallbackToDefaultDisplayTexts { get; }
+
 		/// <summary>
 		/// Is UI navigation with selected element allowed when this type of device is used?
 		/// </summary>
@@ -498,15 +507,18 @@ namespace DevLocker.GFrame.Input
 		/// <summary>
 		/// Get the display text for provided <see cref="InputAction"/> (the first binding) for the current <see cref="IInputBindingDisplayDataProvider"/>.
 		/// </summary>
-		public static string GetDisplayTextFor(this IInputContext context, InputAction action, bool useShortText = false)
+		public static string GetDisplayTextFor(this IInputContext context, InputAction action, bool useShortText = true, bool fallbackToDefaultDisplayTexts = true)
 		{
 			IInputBindingDisplayDataProvider currentDisplayDataProvider = context.GetCurrentDisplayDataProvider();
 			if (currentDisplayDataProvider == null)
-				return null;
+				return "";
 
 			InputBindingDisplayData displayData = currentDisplayDataProvider.GetBindingDisplaysFor(action).FirstOrDefault();
 			if (!displayData.IsValid)
-				return null;
+				return "";
+
+			if (displayData.IsFallback && !fallbackToDefaultDisplayTexts)
+				return "";
 
 			string usedText = useShortText && !string.IsNullOrWhiteSpace(displayData.ShortText)
 					? displayData.ShortText

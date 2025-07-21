@@ -36,14 +36,28 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			public int CompositePartNumberToUse;
 		}
 
-		[Tooltip("Disable the text mesh pro component if input action for the current device is unavailable.\nIf layout element is present on this object, it will set it to ignore the layout as well.")]
-		public bool HideTextIfBindingUnavailable = true;
+		[Serializable]
+		public class ExtraSettingsType
+		{
+			public bool UseShortText = true;
+
+			//[Tooltip("Enter how the hotkey text should be displayed. Use \"{Hotkey}\" to be replaced with the matched text.\nLeave empty to skip.")]
+			//public string FormatText;
+
+			[Tooltip("Should default fallback text be used when no appropriate display data was found?")]
+			public IInputContext.InputBehaviourOverride FallbackToDefaultDisplayTexts;
+
+			[Tooltip("Disable the text mesh pro component if input action for the current device is unavailable or fallback is not desired.\nIf layout element is present on this object, it will set it to ignore the layout as well.")]
+			public bool HideTextIfBindingUnavailable = true;
+		}
 
 		[Space]
 		[Tooltip("(Optional) Format selected binding display text if it doesn't use sprites.\n\"{binding}\" will be replaced with the binding display text.")]
 		public string FormatBindingTexts = "";
 		[Tooltip("(Optional) Format selected binding display text if it contains sprites.\n\"{binding}\" will be replaced with the binding display text.")]
 		public string FormatBindingSprites = "";
+
+		public ExtraSettingsType ExtraSettings = new ExtraSettingsType();
 
 		private static Regex s_ActionPattern = new Regex(@"\{[\w\d]+(\|\d+){0,2}\}");
 
@@ -167,7 +181,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 			MatchCollection matches = s_ActionPattern.Matches(text);
 			if (matches.Count == 0) {
-				m_Text.enabled = !HideTextIfBindingUnavailable || !shouldHideText;
+				m_Text.enabled = !ExtraSettings.HideTextIfBindingUnavailable || !shouldHideText;
 				if (m_LayoutElement) {
 					m_LayoutElement.ignoreLayout = !m_Text.enabled;
 				}
@@ -231,7 +245,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 			replaced.Append(text.Substring(prevIndex, text.Length - prevIndex));
 
-			m_Text.enabled = !HideTextIfBindingUnavailable || !shouldHideText;
+			m_Text.enabled = !ExtraSettings.HideTextIfBindingUnavailable || !shouldHideText;
 			if (m_LayoutElement) {
 				m_LayoutElement.ignoreLayout = !m_Text.enabled;
 			}
@@ -260,19 +274,27 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				count++;
 			}
 
-			if (!displayData.IsValid && !HideTextIfBindingUnavailable) {
+
+			// Probably no match on binding number or composite part number.
+			if (!displayData.IsValid && !ExtraSettings.HideTextIfBindingUnavailable) {
 				displayData = displayDataProvider.GetBindingDisplaysFor(action).LastOrDefault();
 			}
 
 			if (!displayData.IsValid)
 				return string.Empty;
 
+			if (displayData.IsFallback && !ExtraSettings.FallbackToDefaultDisplayTexts.FinalValue(displayDataProvider.FallbackToDefaultDisplayTexts)) {
+				return string.Empty;
+			}
+
 			if (displayData.Text.Contains("<sprite")) {
 				string locallyFormatted = string.IsNullOrWhiteSpace(FormatBindingSprites) ? displayData.Text : FormatBindingSprites.Replace("{binding}", displayData.Text, StringComparison.OrdinalIgnoreCase);
 				return displayDataProvider.FormatBindingDisplayText(locallyFormatted);
 			} else {
+				string hotkeyText = ExtraSettings.UseShortText ? displayData.ShortText : displayData.Text;
+
 				// Add <b> tag to store the input action in an attribute so we can recognize it later and update it if needed.
-				string displayText = $"<b inputAction=\"{action.name}\">{displayData.Text}</b>";
+				string displayText = $"<b inputAction=\"{action.name}\">{hotkeyText}</b>";
 				string locallyFormatted = string.IsNullOrWhiteSpace(FormatBindingTexts) ? displayText : FormatBindingTexts.Replace("{binding}", displayText, StringComparison.OrdinalIgnoreCase);
 
 				return displayDataProvider.FormatBindingDisplayText(locallyFormatted);
