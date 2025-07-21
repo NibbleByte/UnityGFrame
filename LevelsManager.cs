@@ -235,8 +235,10 @@ namespace DevLocker.GFrame
 
 			} finally {
 
-				foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
-					playerContext.IsLevelLoading = false;
+				if (Application.isPlaying) {
+					foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
+						playerContext.IsLevelLoading = false;
+					}
 				}
 			}
 		}

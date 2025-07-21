@@ -382,6 +382,12 @@ namespace DevLocker.GFrame.Input.Contexts
 					return;
 			}
 
+			// MacOS sends this "IMEC" event after each mouse click which causes constant trigger between mouse and keyboard. Ignore the event for now.
+			if (eventType == IMEC_EventType /*IMECompositionEvent.Type - well, it's not this one. Fishy. */)
+				return;
+			if (eventType == IMES_EventType)
+				return;
+
 			m_LastUsedDevice = device;
 			CacheDisplayData();
 
@@ -396,6 +402,9 @@ namespace DevLocker.GFrame.Input.Contexts
 
 			TriggerLastUsedDeviceChanged();
 		}
+
+		private static readonly FourCC IMEC_EventType = new FourCC("IMEC");
+		private static readonly FourCC IMES_EventType = new FourCC("IMES");
 	}
 }
 #endif
