@@ -76,7 +76,11 @@ namespace DevLocker.GFrame.SampleGame.Play
 
 				var playerContext = uiController.GetComponent<PlayerContextUIRootObject>();
 
+				// HACK: trick the PlayerInput to use the reference to our asset instead of copying the actions. Check the InputComponentContext() constructor for more info.
+				// NOTE: the PlayerInput must initially have empty reference set for InputActionAsset in the prefab.
+				playerInput.enabled = false;
 				playerInput.actions = playerControls.asset;
+				playerInput.enabled = true;
 
 				var uiInputModule = eventSystem.GetComponentInChildren<InputSystemUIInputModule>();
 				uiInputModule.actionsAsset = playerControls.asset;  // This will refresh the UI Input action references to the new asset.
