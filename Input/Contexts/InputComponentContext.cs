@@ -67,6 +67,26 @@ namespace DevLocker.GFrame.Input.Contexts
 
 		public InputComponentContext(PlayerInput playerInput, InputActionsMaskedStack inputStack, IInputContext.InputBehaviours defaultBehaviours, IEnumerable<IInputBindingDisplayDataProvider> bindingDisplayProviders = null)
 		{
+			var checkAction1 = playerInput.actions.First();
+			var checkAction2 = inputStack.Actions.First();
+			if (checkAction1 != checkAction2) {
+				// Even if you set PlayerInput.actions to your IInputActionCollection2 controls instance asset, internaly they will be copied.
+				// We need to use the same instances (references) everywhere for consistency.
+				// To achieve this, do the following:
+				// - Remove the assigned InputActionAsset reference at the PlayerInput in your prefab.
+				// - On startup: disable, assign, enable the desired asset coming from the IInputActionCollection2:
+				//
+				//     var playerControls = new SamplePlayerControls();
+				//     playerInput.enabled = false;
+				//     playerInput.actions = playerControls.asset;
+				//     playerInput.enabled = true;
+				//
+				// This will trick the PlayerInput to refer to our instance.
+				// Hack for 1.14.0 version and above.
+				// https://github.com/Unity-Technologies/InputSystem/commit/652aed9ab61c0913ff0a36a4997e649541ee7be2
+				throw new InvalidOperationException("PlayerInput component has different set of actions from the ones used in the stack!");
+			}
+
 			DefaultBehaviours = defaultBehaviours;
 
 			PlayerInput = playerInput;
