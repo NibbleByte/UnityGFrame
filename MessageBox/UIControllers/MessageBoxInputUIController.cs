@@ -8,14 +8,14 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 	/// </summary>
 	public class MessageBoxInputUIController : MessageBoxSimpleUIController
 	{
-		public TMPro.TMP_InputField TMPInputField;
+		public TMPro.TMP_InputField InputField;
 
 		public override void Init()
 		{
 			base.Init();
 
-			if (TMPInputField) {
-				TMPInputField.onValidateInput += OnValidateInput;
+			if (InputField) {
+				InputField.onValidateInput += OnValidateInput;
 			}
 		}
 
@@ -23,10 +23,10 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 		{
 			base.Show(data);
 
-			if (TMPInputField) {
-				TMPInputField.text = data.SuggestedText;
-				TMPInputField.Select();
-				TMPInputField.ActivateInputField();
+			if (InputField) {
+				InputField.text = data.SuggestedText;
+				InputField.Select();
+				InputField.ActivateInputField();
 			}
 		}
 
@@ -41,8 +41,8 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 				case MessageBoxResponse.Yes:
 				case MessageBoxResponse.OK:
 				case MessageBoxResponse.Retry:
-					if (TMPInputField)
-						return !string.IsNullOrWhiteSpace(TMPInputField.text);
+					if (InputField)
+						return !string.IsNullOrWhiteSpace(InputField.text);
 
 					return false;
 			}
@@ -54,8 +54,8 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 		{
 			MessageBoxResponseData resultData = base.CreateResponseData(result);
 
-			if (TMPInputField) {
-				resultData.InputTextResponse = TMPInputField.text.Trim();
+			if (InputField) {
+				resultData.InputTextResponse = InputField.text.Trim();
 			}
 
 			return resultData;

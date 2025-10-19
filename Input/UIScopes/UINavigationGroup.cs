@@ -684,31 +684,135 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			if (Navigation == NavigationMode.HorizontalAlongAxis || Navigation == NavigationMode.VerticalAlongAxis) {
 
-				while ((selectable = FindSelectableAlongAxis(selectable, dir)) != null) {
-					if (m_ManagedSelectables.Contains(selectable))
-						return selectable;
-				}
+				return FindSelectableAlongAxis(selectable, dir, m_ManagedSelectables);
+
+				//while ((selectable = FindSelectableAlongAxis(selectable, dir)) != null) {
+				//	if (m_ManagedSelectables.Contains(selectable))
+				//		return selectable;
+				//}
 
 			} else {
 
+				return FindSelectableInDirection(selectable, dir, m_ManagedSelectables);
+
+				// This was the old logic, but it had some issues, so we now only search in our managed selectables.
+
 				// Selectable.FindSelectable() searches only interactable ones.
-				while ((selectable = selectable.FindSelectable(dir)) != null) {
-					if (m_ManagedSelectables.Contains(selectable))
-						return selectable;
+				//while ((selectable = selectable.FindSelectable(dir)) != null) {
+				//	if (m_ManagedSelectables.Contains(selectable))
+				//		return selectable;
+				//}
+			}
+		}
+
+		/// <summary>
+		/// Finds the startingSelectable object next to this one.
+		/// THIS IS A COPY-PASTE OF <see cref="Selectable.FindSelectable(Vector3)"/> WITH SOME IMPROVEMENTS.
+		/// </summary>
+		public static Selectable FindSelectableInDirection(Selectable startingSelectable, Vector3 dir, List<Selectable> allSelectables)
+		{
+			// COPY-PASTED from Selectable.GetPointOnRectEdge()
+			Vector3 GetPointOnRectEdge(RectTransform rect, Vector2 dir)
+			{
+				if (rect == null)
+					return Vector3.zero;
+				if (dir != Vector2.zero)
+					dir /= Mathf.Max(Mathf.Abs(dir.x), Mathf.Abs(dir.y));
+				dir = rect.rect.center + Vector2.Scale(rect.rect.size, dir * 0.5f);
+				return dir;
+			}
+
+			dir = dir.normalized;
+			Vector3 localDir = Quaternion.Inverse(startingSelectable.transform.rotation) * dir;
+			Vector3 pos = startingSelectable.transform.TransformPoint(GetPointOnRectEdge(startingSelectable.transform as RectTransform, localDir));
+			float maxScore = Mathf.NegativeInfinity;
+			float maxFurthestScore = Mathf.NegativeInfinity;
+			float score = 0;
+
+			bool wantsWrapAround = startingSelectable.navigation.wrapAround && (startingSelectable.navigation.mode == UnityEngine.UI.Navigation.Mode.Vertical || startingSelectable.navigation.mode == UnityEngine.UI.Navigation.Mode.Horizontal);
+
+			Selectable bestPick = null;
+			Selectable bestFurthestPick = null;
+
+			// MODIFIED: searching only in the provided list of selectables, optimization.
+			// This fixes the issue: Selectable.FindSelectable() returned buttons from the panel in the background that are not managed by this group.
+			// If they happen to be in the approximately the same position, the foreground element would never be selected.
+			for (int i = 0; i < allSelectables.Count; ++i) {
+				Selectable sel = allSelectables[i];
+
+				if (sel == startingSelectable)
+					continue;
+
+				if (!sel.IsInteractable() || sel.navigation.mode == UnityEngine.UI.Navigation.Mode.None)
+					continue;
+
+#if UNITY_EDITOR
+				// Apart from runtime use, FindSelectable is used by custom editors to
+				// draw arrows between different selectables. For scene view cameras,
+				// only selectables in the same stage should be considered.
+				if (Camera.current != null && !UnityEditor.SceneManagement.StageUtility.IsGameObjectRenderedByCamera(sel.gameObject, Camera.current))
+					continue;
+#endif
+
+				var selRect = sel.transform as RectTransform;
+				Vector3 selCenter = selRect != null ? (Vector3)selRect.rect.center : Vector3.zero;
+				Vector3 myVector = sel.transform.TransformPoint(selCenter) - pos;
+
+				// Value that is the distance out along the direction.
+				float dot = Vector3.Dot(dir, myVector);
+
+				// If element is in wrong direction and we have wrapAround enabled check and cache it if furthest away.
+				if (wantsWrapAround && dot < 0) {
+					score = -dot * myVector.sqrMagnitude;
+
+					if (score > maxFurthestScore) {
+						maxFurthestScore = score;
+						bestFurthestPick = sel;
+					}
+
+					continue;
+				}
+
+				// Skip elements that are in the wrong direction or which have zero distance.
+				// This also ensures that the scoring formula below will not have a division by zero error.
+				if (dot <= 0)
+					continue;
+
+				// This scoring function has two priorities:
+				// - Score higher for positions that are closer.
+				// - Score higher for positions that are located in the right direction.
+				// This scoring function combines both of these criteria.
+				// It can be seen as this:
+				//   Dot (dir, myVector.normalized) / myVector.magnitude
+				// The first part equals 1 if the direction of myVector is the same as dir, and 0 if it's orthogonal.
+				// The second part scores lower the greater the distance is by dividing by the distance.
+				// The formula below is equivalent but more optimized.
+				//
+				// If a given score is chosen, the positions that evaluate to that score will form a circle
+				// that touches pos and whose center is located along dir. A way to visualize the resulting functionality is this:
+				// From the position pos, blow up a circular balloon so it grows in the direction of dir.
+				// The first Selectable whose center the circular balloon touches is the one that's chosen.
+				score = dot / myVector.sqrMagnitude;
+
+				if (score > maxScore) {
+					maxScore = score;
+					bestPick = sel;
 				}
 			}
 
-			return null;
+			if (wantsWrapAround && null == bestPick) return bestFurthestPick;
+
+			return bestPick;
 		}
 
-		public Selectable FindSelectableAlongAxis(Selectable selectable, Vector3 dir)
+		public static Selectable FindSelectableAlongAxis(Selectable startingSelectable, Vector3 dir, List<Selectable> allSelectables)
 		{
 			float minDistance = float.MaxValue;
 			Selectable closestSelectable = null;
 
-			foreach(Selectable otherSelectable in Selectable.allSelectablesArray) {
+			foreach(Selectable otherSelectable in allSelectables) {
 
-				if (otherSelectable == selectable)
+				if (otherSelectable == startingSelectable)
 					continue;
 
 				if (!otherSelectable.IsInteractable() || otherSelectable.navigation.mode == UnityEngine.UI.Navigation.Mode.None)
@@ -722,10 +826,10 @@ namespace DevLocker.GFrame.Input.UIScope
 				if (Camera.current != null && !UnityEditor.SceneManagement.StageUtility.IsGameObjectRenderedByCamera(otherSelectable.gameObject, Camera.current))
 					continue;
 #endif
-				Vector3 dist = otherSelectable.transform.position - selectable.transform.position;
+				Vector3 dist = otherSelectable.transform.position - startingSelectable.transform.position;
 
-				// Skip if in the opposite direction.
-				if (Vector3.Dot(dir, dist.normalized) < 0)
+				// Skip if in the opposite direction. Also skip if aligned on the same axis or will loop forever.
+				if (Vector3.Dot(dir, dist.normalized) <= 0)
 					continue;
 
 				Vector3 projectedDist = Vector3.Project(dist, dir);

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -1113,6 +1115,13 @@ namespace DevLocker.GFrame.Input.UIScope
 						.ToHashSet()
 						;
 
+					// Additional actions to be enabled with this layer. Useful for global actions that are used by the code directly.
+					foreach (InputActionReference actionRef in FocusLayer.AdditionalActions) {
+						InputAction action = context.FindActionFor(actionRef);
+						actionsMask.Add(action);
+						context.Enable(this, action);
+					}
+
 					if (FocusLayer.InputBehaviour == UIScopeFocusLayer.InputBehaviourType.IsolateScopeElementsAndUIInput) {
 						foreach (var action in context.GetUIActions()) {
 							actionsMask.Add(action);
@@ -1139,6 +1148,11 @@ namespace DevLocker.GFrame.Input.UIScope
 
 				// If this was not the layer root, nothing would happen, this did not change the input.
 				if (FocusLayer != null && FocusLayer.InputBehaviour != UIScopeFocusLayer.InputBehaviourType.PreserveInput) {
+
+					foreach (InputActionReference actionRef in FocusLayer.AdditionalActions) {
+						InputAction action = context.FindActionFor(actionRef);
+						context.Disable(this, action);
+					}
 
 					if (FocusLayer.InputBehaviour == UIScopeFocusLayer.InputBehaviourType.IsolateScopeElementsAndUIInput) {
 						foreach (var action in context.GetUIActions()) {

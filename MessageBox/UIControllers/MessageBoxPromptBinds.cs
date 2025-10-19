@@ -34,7 +34,7 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 	[Serializable]
 	public struct MessageBoxUIText
 	{
-		public TMPro.TextMeshProUGUI TextMeshProText;
+		public TMPro.TMP_Text TextMeshProText;
 
 		public string Text {
 			get {
