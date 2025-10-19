@@ -11,7 +11,7 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 	public class MessageBoxProcessingUIController : MessageBoxSimpleUIController
 	{
 		public Slider ProgressBar;
-		public MessageBoxUIText ProgressBarText;
+		public TMPro.TMP_Text ProgressBarText;
 
 		public string ProgressBarTextPrefix = "";
 		public string ProgressBarTextSuffix = "%";
@@ -69,7 +69,7 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 				ProgressBar.value = progress;
 			}
 
-			ProgressBarText.Text = ProgressBarTextPrefix + Mathf.Round(ProgressBar.value * 100) + ProgressBarTextSuffix;
+			if (ProgressBarText) ProgressBarText.text = ProgressBarTextPrefix + Mathf.Round(ProgressBar.value * 100) + ProgressBarTextSuffix;
 		}
 	}
 }

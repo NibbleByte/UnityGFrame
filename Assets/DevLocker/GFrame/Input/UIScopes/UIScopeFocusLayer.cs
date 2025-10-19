@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 namespace DevLocker.GFrame.Input.UIScope
@@ -24,12 +27,18 @@ namespace DevLocker.GFrame.Input.UIScope
 		[Tooltip("The root scope of this focus layer decides how input is handled: preserve the input or push new input mask on the stack.")]
 		public InputBehaviourType InputBehaviour = InputBehaviourType.IsolateScopeElementsAndUIInput;
 
+		[Tooltip("Additional actions to be enabled with this layer. Useful for global actions that are used by the code directly.")]
+		public List<InputActionReference> AdditionalActions = new List<InputActionReference>();
+
 		public bool Equals(UIScopeFocusLayer other)
 		{
 			if (ReferenceEquals(this, other))
 				return true;
 
 			if (ReferenceEquals(other, null))
+				return false;
+
+			if (!AdditionalActions.SequenceEqual(other.AdditionalActions))
 				return false;
 
 			return Priority == other.Priority && InputBehaviour == other.InputBehaviour;
@@ -48,6 +57,10 @@ namespace DevLocker.GFrame.Input.UIScope
 			unchecked {
 				hash = hash * 23 + Priority.GetHashCode();
 				hash = hash * 23 + InputBehaviour.GetHashCode();
+
+				if (AdditionalActions.Count > 0) {
+					hash = hash * 23 + AdditionalActions.Sum(action => action.GetHashCode());
+				}
 			}
 
 			return hash;

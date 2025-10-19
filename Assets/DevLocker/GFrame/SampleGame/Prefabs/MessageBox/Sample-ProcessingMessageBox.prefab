@@ -32,7 +32,6 @@ RectTransform:
   - {fileID: 971179018993862815}
   - {fileID: 1937426496883257960}
   m_Father: {fileID: 1737939074830665892}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -122,7 +121,6 @@ RectTransform:
   m_Children:
   - {fileID: 6958916771920307551}
   m_Father: {fileID: 1937426496883257960}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -198,7 +196,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2951218658630878847}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -276,15 +273,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -332,7 +331,6 @@ RectTransform:
   m_Children:
   - {fileID: 2951218658630878847}
   m_Father: {fileID: 7086019418031631211}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
@@ -370,7 +368,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7086019418031631211}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
@@ -420,6 +417,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 4595660819702734562, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
@@ -444,7 +442,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4595660820359430500, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
       propertyPath: m_Name
-      value: Sample-ProcessingMessageBox2
+      value: Sample-ProcessingMessageBox
       objectReference: {fileID: 0}
     - target: {fileID: 4595660820359430503, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
       propertyPath: m_Pivot.x
@@ -548,6 +546,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4595660820359430496, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4595660820359430503, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7086019418031631211}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4595660820359430500, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9103595903167638637}
   m_SourcePrefab: {fileID: 100100000, guid: e4b2b368ca2c31c4f9be8de1129225d4, type: 3}
 --- !u!114 &1159458046079186779 stripped
 MonoBehaviour:
@@ -693,15 +700,11 @@ MonoBehaviour:
     Button: {fileID: 1737939073847205957}
   - ButtonType: 64
     Button: {fileID: 1737939073449090557}
-  Title:
-    TextMeshProText: {fileID: 1159458046079186779}
-  Subtitle:
-    TextMeshProText: {fileID: 0}
-  TextContent:
-    TextMeshProText: {fileID: 2271863129991362246}
+  Title: {fileID: 1159458046079186779}
+  Subtitle: {fileID: 0}
+  TextContent: {fileID: 2271863129991362246}
   ProgressBar: {fileID: 4512698737607609689}
-  ProgressBarText:
-    TextMeshProText: {fileID: 5541164780317135708}
+  ProgressBarText: {fileID: 5541164780317135708}
   ProgressBarTextPrefix: 
   ProgressBarTextSuffix: '%'
 --- !u!114 &1737939075123290109 stripped

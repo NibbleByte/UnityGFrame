@@ -5,15 +5,15 @@ namespace DevLocker.GFrame.MessageBox.UIControllers
 	/// </summary>
 	public class MessageBoxSimpleUIController : MessageBoxUIControllerBase
 	{
-		public MessageBoxUIText Title;
-		public MessageBoxUIText Subtitle;
-		public MessageBoxUIText TextContent;
+		public TMPro.TMP_Text Title;
+		public TMPro.TMP_Text Subtitle;
+		public TMPro.TMP_Text TextContent;
 
 		public override void Show(MessageData data)
 		{
-			Title.Text = data.Title;
-			Subtitle.Text = data.Subtitle;
-			TextContent.Text = data.Content;
+			if (Title) Title.text = data.Title;
+			if (Subtitle) Subtitle.text = data.Subtitle;
+			if (TextContent) TextContent.text = data.Content;
 
 			base.Show(data);
 		}

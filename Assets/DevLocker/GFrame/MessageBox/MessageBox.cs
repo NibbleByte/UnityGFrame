@@ -514,5 +514,29 @@ namespace DevLocker.GFrame.MessageBox
 
 			return messageData;
 		}
+
+		/// <summary>
+		/// Show a custom modal dialog to the user and wait for confirmation.
+		/// </summary>
+		public static MessageData ShowCustom<T>(this MessageBox instance,
+			string content = "",
+			MessageBoxButtons buttons = MessageBoxButtons.OK,
+			MessageData.MessageBoxResponseCallback callback = null,
+			object sender = null,
+			object userData = null
+			) where T : IMessageBoxUIController
+		{
+			var messageData = new MessageData(MessageMode.CustomUIController, callback) {
+				Content = content,
+				Buttons = buttons,
+				UIControllerType = typeof(T),
+				Sender = sender,
+				UserData = userData,
+			};
+
+			instance.Show(messageData);
+
+			return messageData;
+		}
 	}
 }
