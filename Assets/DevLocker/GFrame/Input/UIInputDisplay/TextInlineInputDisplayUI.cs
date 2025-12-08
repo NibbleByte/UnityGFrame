@@ -26,14 +26,35 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 	[RequireComponent(typeof(TextMeshProUGUI))]
 	public class TextInlineInputDisplayUI : MonoBehaviour
 	{
-		private class OwnedAction
+		public class TextToken
 		{
-			public string OriginalText;
-			public string DisplayText;
-			public InputAction Action;
+			public readonly bool IsAction;
+			public readonly int StartIndex;
+			public readonly string OriginalText;
+			public readonly string DisplayText;
+			public readonly InputAction Action;
 
-			public int BindingNumberToUse;
-			public int CompositePartNumberToUse;
+			public readonly int BindingNumberToUse;
+			public readonly int CompositePartNumberToUse;
+
+			public bool DisplaysIcon => IsAction && DisplayText.Contains("<sprite");
+
+			public TextToken(int startIndex, string originalText, string displayText, InputAction action, int bindingNumberToUse, int compositePartNumberToUse)
+			{
+				IsAction = true;
+				StartIndex = startIndex;
+				OriginalText = originalText;
+				DisplayText = displayText;
+				Action = action;
+				BindingNumberToUse = bindingNumberToUse;
+				CompositePartNumberToUse = compositePartNumberToUse;
+			}
+			public TextToken(int startIndex, string originalText)
+			{
+				IsAction = false;
+				StartIndex = startIndex;
+				OriginalText = originalText;
+			}
 		}
 
 		[Serializable]
@@ -41,14 +62,14 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		{
 			public bool UseShortText = true;
 
-			//[Tooltip("Enter how the hotkey text should be displayed. Use \"{Hotkey}\" to be replaced with the matched text.\nLeave empty to skip.")]
-			//public string FormatText;
-
 			[Tooltip("Should default fallback text be used when no appropriate display data was found?")]
 			public IInputContext.InputBehaviourOverride FallbackToDefaultDisplayTexts;
 
 			[Tooltip("Disable the text mesh pro component if input action for the current device is unavailable or fallback is not desired.\nIf layout element is present on this object, it will set it to ignore the layout as well.")]
 			public bool HideTextIfBindingUnavailable = true;
+
+			[Tooltip("When hotkey is not visible only the text component is disabled, which may still affect the layout.\n\nEnable this to also set attached LayoutElement component to \"Ignore Layout\".")]
+			public bool DisableLayoutElementWhenHidden = false;
 		}
 
 		[Space]
@@ -57,6 +78,9 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		[Tooltip("(Optional) Format selected binding display text if it contains sprites.\n\"{binding}\" will be replaced with the binding display text.")]
 		public string FormatBindingSprites = "";
 
+		[Tooltip("This prefab will be instantiated and placed BEHIND the hotkeys represented by texts (not sprites). It is set as sibling BEFORE this object to render in the correct order.")]
+		public RectTransform BackgroundForTexts;
+
 		public ExtraSettingsType ExtraSettings = new ExtraSettingsType();
 
 		private static Regex s_ActionPattern = new Regex(@"\{[\w\d]+(\|\d+){0,2}\}");
@@ -64,8 +88,14 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		private TextMeshProUGUI m_Text;
 		private LayoutElement m_LayoutElement;
 		private bool m_ChangingText = false;
-		private Dictionary<string, OwnedAction> m_ManagedActions = new Dictionary<string, OwnedAction>();
-		private List<string> m_RemoveDictionaryCache = new List<string>();
+
+		// Contains ALL tokens (normal text and hotkey indicators).
+		public IReadOnlyList<TextToken> DisplayedTokens => m_DisplayedTokens;
+		private List<TextToken> m_DisplayedTokens = new List<TextToken>();
+		public string OriginalText { get; private set; } = "";
+		private string m_LastProcessedText = "";
+
+		private List<RectTransform> m_BackgroundsPool = new List<RectTransform>();
 
 		private IInputBindingDisplayDataProvider m_LastDisplayDataProvider;
 
@@ -98,7 +128,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 			if (m_Text) {
 				// This will be called right after the change happens, but before layout rebuild happens, so it shouldn't be slow.
-				m_Text.RegisterDirtyLayoutCallback(TextLayoutChanged);
+				m_Text.RegisterDirtyLayoutCallback(OnTextLayoutChanged);
+
+				// This is called after meshes were generated.
+				// NOTE: Doesn't allow adding or enabling background elements at this time.
+				//TMPro_EventManager.TEXT_CHANGED_EVENT.Add(OnTextChangeFinished);
 			}
 
 			if (m_PlayerContext.InputContext == null) {
@@ -110,6 +144,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			m_PlayerContext.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
 
 			OnLastUsedDeviceChanged();
+
+			// Because OnLastUsedDeviceChanged() may NOT refresh the text, which will not enable the backgrounds.
+			if (BackgroundForTexts && m_DisplayedTokens.Any(t => t.IsAction && !t.DisplaysIcon) && (!m_BackgroundsPool.FirstOrDefault()?.gameObject.activeSelf ?? true)) {
+				RefreshTextBackgrounds();
+			}
 		}
 
 		void OnDisable()
@@ -118,7 +157,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				return;
 
 			if (m_Text) {
-				m_Text.UnregisterDirtyLayoutCallback(TextLayoutChanged);
+				m_Text.UnregisterDirtyLayoutCallback(OnTextLayoutChanged);
 			}
 
 			if (m_PlayerContext.InputContext == null) {
@@ -127,7 +166,22 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				return;
 			}
 
+			foreach (RectTransform background in m_BackgroundsPool) {
+				if (background) {
+					background.gameObject.SetActive(false);
+				}
+			}
+
 			m_PlayerContext.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
+		}
+
+		void OnDestroy()
+		{
+			foreach (RectTransform background in m_BackgroundsPool) {
+				if (background) {
+					Destroy(background.gameObject);
+				}
+			}
 		}
 
 		public void RefreshTextInputSprites()
@@ -142,67 +196,42 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (currentProvider == null)
 				return;
 
-			string text = m_Text.text;
-			bool hasChanges = false;
-			bool shouldHideText = false;
-
-			if (m_LastDisplayDataProvider != null && m_LastDisplayDataProvider != currentProvider) {
-
-				foreach(var pair in m_ManagedActions) {
-
-					// Text could have changed in the mean time so our doing was overwritten.
-					string lastDisplayText = pair.Value.DisplayText;
-					if (!text.Contains(lastDisplayText) || string.IsNullOrEmpty(lastDisplayText)) {
-						m_RemoveDictionaryCache.Add(pair.Key);
-						continue;
-					}
-
-					string currentDisplayText = GetDisplayTextFor(pair.Value.Action, currentProvider, pair.Value.BindingNumberToUse, pair.Value.CompositePartNumberToUse);
-
-					// If new provider doesn't have visuals for this binding, restore the initial text.
-					if (string.IsNullOrEmpty(currentDisplayText)) {
-						currentDisplayText = pair.Value.OriginalText;
-						shouldHideText = true;
-						m_RemoveDictionaryCache.Add(pair.Key);
-					}
-
-					pair.Value.DisplayText = currentDisplayText;
-					text = text.Replace(lastDisplayText, currentDisplayText);
-					hasChanges = true;
-				}
-
-				foreach(string originalText in m_RemoveDictionaryCache) {
-					m_ManagedActions.Remove(originalText);
-				}
-				m_RemoveDictionaryCache.Clear();
+			// If text was changed, use that and update our cache.
+			if (m_Text.text != m_LastProcessedText) {
+				OriginalText = m_Text.text;
 			}
 
 			m_LastDisplayDataProvider = currentProvider;
+			m_DisplayedTokens.Clear();
 
-			MatchCollection matches = s_ActionPattern.Matches(text);
+			// Just in case someone destroyed them.
+			m_BackgroundsPool.RemoveAll(b => b == null);
+
+			MatchCollection matches = s_ActionPattern.Matches(OriginalText);
 			if (matches.Count == 0) {
-				m_Text.enabled = !ExtraSettings.HideTextIfBindingUnavailable || !shouldHideText;
-				if (m_LayoutElement) {
+				// Will be activated when the meshes are generated, check the OnTextChangeFinished callback.
+				foreach (RectTransform background in m_BackgroundsPool) {
+					background.gameObject.SetActive(false);
+				}
+
+				// If text doesn't contain any action names, just leave it?
+				m_Text.enabled = true; //!ExtraSettings.HideTextIfBindingUnavailable;
+
+				if (m_LayoutElement && ExtraSettings.DisableLayoutElementWhenHidden) {
 					m_LayoutElement.ignoreLayout = !m_Text.enabled;
 				}
-
-				if (hasChanges) {
-					m_ChangingText = true;
-					m_Text.text = text;
-					m_ChangingText = false;
-				}
-
 				return;
 			}
 
-
-			StringBuilder replaced = new StringBuilder();
-
-			int prevIndex = 0;
+			bool shouldHideText = false;
+			int prevOriginalIndex = 0;
+			int processedLength = 0;
 
 			foreach (Match match in matches) {
-				replaced.Append(text.Substring(prevIndex, match.Index - prevIndex));
-				prevIndex = match.Index + match.Value.Length;
+				m_DisplayedTokens.Add(new TextToken(processedLength, OriginalText.Substring(prevOriginalIndex, match.Index - prevOriginalIndex)));
+				processedLength += m_DisplayedTokens.Last().OriginalText.Length;
+
+				prevOriginalIndex = match.Index + match.Value.Length;
 
 				// Remove the curly braces {}
 				string actionName = match.Value.Substring(1, match.Value.Length - 2);
@@ -214,11 +243,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 					actionName = matchArgs[0];
 
 					if (!int.TryParse(matchArgs[1], out bindingNumberToUse)) {
-						Debug.LogError($"Invalid second parameter used for bindingNumberToUse in \"{match.Value}\", part of the text:\n{text}");
+						Debug.LogError($"Invalid second parameter used for bindingNumberToUse in \"{match.Value}\", part of the text:\n{OriginalText}");
 					}
 
 					if (matchArgs.Length > 2 && !int.TryParse(matchArgs[2], out compositePartNumberToUse)) {
-						Debug.LogError($"Invalid third parameter used for compositePartNumberToUse in \"{match.Value}\", part of the text:\n{text}");
+						Debug.LogError($"Invalid third parameter used for compositePartNumberToUse in \"{match.Value}\", part of the text:\n{OriginalText}");
 					}
 				}
 
@@ -227,35 +256,108 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				string displayText = GetDisplayTextFor(action, currentProvider, bindingNumberToUse, compositePartNumberToUse);
 				if (!string.IsNullOrEmpty(displayText)) {
 
-					if (!m_ManagedActions.ContainsKey(match.Value)) {
-						m_ManagedActions.Add(match.Value, new OwnedAction() {
-							OriginalText = match.Value,
-							DisplayText = displayText,
-							Action = action,
-							BindingNumberToUse = bindingNumberToUse,
-							CompositePartNumberToUse = compositePartNumberToUse,
-						});
-					}
-					replaced.Append(displayText);
+					m_DisplayedTokens.Add(new TextToken(processedLength, match.Value, displayText, action, bindingNumberToUse, compositePartNumberToUse));
+					processedLength += displayText.Length;
+
 				} else {
+
 					shouldHideText = true;
-					replaced.Append(match.Value);
+
+					m_DisplayedTokens.Add(new TextToken(processedLength, match.Value));
+					processedLength += match.Value.Length;
 				}
 			}
 
-			replaced.Append(text.Substring(prevIndex, text.Length - prevIndex));
+			// Remainder of the text.
+			if (prevOriginalIndex < OriginalText.Length) {
+				m_DisplayedTokens.Add(new TextToken(processedLength, OriginalText.Substring(prevOriginalIndex, OriginalText.Length - prevOriginalIndex)));
+			}
+
+			m_LastProcessedText = string.Join("", m_DisplayedTokens.Select(t => t.IsAction ? t.DisplayText : t.OriginalText));
 
 			m_Text.enabled = !ExtraSettings.HideTextIfBindingUnavailable || !shouldHideText;
-			if (m_LayoutElement) {
+			if (m_LayoutElement && ExtraSettings.DisableLayoutElementWhenHidden) {
 				m_LayoutElement.ignoreLayout = !m_Text.enabled;
 			}
 
 			m_ChangingText = true;
-			m_Text.text = replaced.ToString();
+			m_Text.text = m_LastProcessedText;
 			m_ChangingText = false;
+
+			if (BackgroundForTexts && m_DisplayedTokens.Any(t => t.IsAction && !t.DisplaysIcon)) {
+				m_Text.ForceMeshUpdate();
+				RefreshTextBackgrounds();
+			} else {
+				foreach (RectTransform background in m_BackgroundsPool) {
+					background.gameObject.SetActive(false);
+				}
+			}
 		}
 
-		private string GetDisplayTextFor(InputAction action, IInputBindingDisplayDataProvider displayDataProvider, int bindingNumberToUse, int compositePartNumberToUse)
+		protected virtual void RefreshTextBackgrounds()
+		{
+			if (BackgroundForTexts == null)
+				return;
+
+			int backgroundIndex = 0;
+			var infos = m_Text.textInfo.characterInfo.Take(m_Text.textInfo.characterCount).ToArray();
+
+			foreach (TextToken token in m_DisplayedTokens) {
+				if (token.IsAction && !token.DisplaysIcon) {
+
+					if (backgroundIndex >= m_BackgroundsPool.Count) {
+						var instance = Instantiate(BackgroundForTexts, m_Text.transform.parent);
+						instance.SetSiblingIndex(m_Text.transform.GetSiblingIndex());
+						instance.name = $"__{BackgroundForTexts.name}_{m_BackgroundsPool.Count}";
+						m_BackgroundsPool.Add(instance);
+					}
+
+					var background = m_BackgroundsPool[backgroundIndex];
+					background.gameObject.SetActive(true);
+					backgroundIndex++;
+
+					int startOriginalIndex = token.StartIndex;
+					int endOriginalIndex = token.StartIndex + token.DisplayText.Length - 1;
+
+					// Infos contain text only without rich text meta tags. But we can use index.
+					int startInfoIndex = Array.FindIndex(infos, n => startOriginalIndex <= n.index && n.index <= endOriginalIndex);
+					int endInfoIndex = Array.FindLastIndex(infos, n => startOriginalIndex <= n.index && n.index <= endOriginalIndex);
+
+					PositionTextBackground(background, token, infos, startInfoIndex, endInfoIndex);
+				}
+			}
+
+			for(; backgroundIndex < m_BackgroundsPool.Count; backgroundIndex++) {
+				m_BackgroundsPool[backgroundIndex].gameObject.SetActive(false);
+			}
+		}
+
+		// It's easy to add background behind 1-letter hotkey representations, but there are various way to represent multi-leter ones.
+		// Best option is to use icons for them. In case you need text+background, you can extend this method and customize the behaviour.
+		protected virtual void PositionTextBackground(RectTransform background, TextToken token, TMP_CharacterInfo[] infos, int startInfoIndex, int endInfoIndex)
+		{
+			// Infos contain text only without meta tags.
+			// TMP_CharacterInfo.index stores the source index of that character.
+			var startInfo = infos[startInfoIndex];
+			var endInfo = infos[endInfoIndex];
+			int displayedCharactersCount = (endInfoIndex - startInfoIndex) + 1;
+
+			Vector3 worldCenter = m_Text.transform.TransformPoint(startInfo.bottomLeft + (endInfo.topRight - startInfo.bottomLeft) / 2f);
+
+			// Get original size, current may be modified.
+			Vector2 backgroundSize = BackgroundForTexts.sizeDelta;
+
+			// More than one letter - expand the background.
+			if (startInfo.index != endInfo.index) {
+				backgroundSize.x += backgroundSize.x * 0.25f * displayedCharactersCount;
+			}
+
+			background.position = worldCenter;
+			background.sizeDelta = backgroundSize;
+		}
+
+
+		protected virtual string GetDisplayTextFor(InputAction action, IInputBindingDisplayDataProvider displayDataProvider, int bindingNumberToUse, int compositePartNumberToUse)
 		{
 			int count = 0;
 			var displayData = new InputBindingDisplayData();
@@ -301,7 +403,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			}
 		}
 
-		private void TextLayoutChanged()
+		private void OnTextLayoutChanged()
 		{
 			// Called by change we are making at the moment.
 			if (m_ChangingText)

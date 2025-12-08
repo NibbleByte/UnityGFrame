@@ -31,6 +31,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			LastSelectableOfNavigationGroup = 28,    // NOTE: These might not be what you expect if arrangement is more irregular...
 			FocusScope = 40,
 			TriggerEvent = 50,
+			CustomWrapProvider = 80,
 		}
 
 		public enum NavigationMode
@@ -59,10 +60,14 @@ namespace DevLocker.GFrame.Input.UIScope
 			public bool IsFocusScopeMode => Mode == WrapMode.FocusScope;
 			public bool IsTriggerEventMode => Mode == WrapMode.TriggerEvent;
 
+			public bool IsCustomWrapProvider => Mode == WrapMode.CustomWrapProvider;
+
 			public Selectable Selectable;
 			public UINavigationGroup NavigationGroup;
+			public Transform Transform;
 			public UIScope Scope;
 			public UnityEvent Event;
+			public UINavigationWrapProviderBase WrapProvider;
 		}
 
 		// IMoveHandler and other events are received only if this is the selected object.
@@ -454,10 +459,10 @@ namespace DevLocker.GFrame.Input.UIScope
 				if (outsideRight) RecordEdgeSelectable(selectable.gameObject, MoveDirection.Right);
 
 				// Outside means no managed selectable is found. Find any selectable then.
-				if (outsideUp && WrapUp.IsAutoMode) nav.selectOnUp = selectable.FindSelectable(selectable.transform.rotation * Vector3.up);
-				if (outsideDown && WrapDown.IsAutoMode) nav.selectOnDown = selectable.FindSelectable(selectable.transform.rotation * Vector3.down);
-				if (outsideLeft && WrapLeft.IsAutoMode) nav.selectOnLeft = selectable.FindSelectable(selectable.transform.rotation * Vector3.left);
-				if (outsideRight && WrapRight.IsAutoMode) nav.selectOnRight = selectable.FindSelectable(selectable.transform.rotation * Vector3.right);
+				if (outsideUp && WrapUp.IsAutoMode) nav.selectOnUp = FindAutoSelectable(selectable, WrapUp.Transform, Vector3.up);
+				if (outsideDown && WrapDown.IsAutoMode) nav.selectOnDown = FindAutoSelectable(selectable, WrapDown.Transform, Vector3.down);
+				if (outsideLeft && WrapLeft.IsAutoMode) nav.selectOnLeft = FindAutoSelectable(selectable, WrapLeft.Transform, Vector3.left);
+				if (outsideRight && WrapRight.IsAutoMode) nav.selectOnRight = FindAutoSelectable(selectable, WrapRight.Transform, Vector3.right);
 
 				if (nav.selectOnUp == null && WrapUp.IsExplicitMode) nav.selectOnUp = WrapUp.Selectable;
 				if (nav.selectOnDown == null && WrapDown.IsExplicitMode) nav.selectOnDown = WrapDown.Selectable;
@@ -656,6 +661,19 @@ namespace DevLocker.GFrame.Input.UIScope
 			return false;
 		}
 
+		private Selectable FindAutoSelectable(Selectable selectable, Transform parentConstraint, Vector3 direction)
+		{
+			if (parentConstraint == null)
+				return selectable.FindSelectable(selectable.transform.rotation * direction);
+
+			var selectables = m_AllActiveSelectables.Take(m_AllActiveSelectablesCount)
+				.Where(s => s != null && s.IsInteractable())
+				.Where(s => s.transform.IsChildOf(parentConstraint))
+				.ToList();
+
+			return FindSelectableInDirection(selectable, selectable.transform.rotation * direction, selectables);
+		}
+
 		private bool IsAutoWrappedNotInteractable(Selectable selectable)
 		{
 			Navigation nav = selectable.navigation;
@@ -709,7 +727,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// Finds the startingSelectable object next to this one.
 		/// THIS IS A COPY-PASTE OF <see cref="Selectable.FindSelectable(Vector3)"/> WITH SOME IMPROVEMENTS.
 		/// </summary>
-		public static Selectable FindSelectableInDirection(Selectable startingSelectable, Vector3 dir, List<Selectable> allSelectables)
+		public static Selectable FindSelectableInDirection(Selectable startingSelectable, Vector3 dir, IReadOnlyList<Selectable> allSelectables)
 		{
 			// COPY-PASTED from Selectable.GetPointOnRectEdge()
 			Vector3 GetPointOnRectEdge(RectTransform rect, Vector2 dir)
@@ -881,6 +899,12 @@ namespace DevLocker.GFrame.Input.UIScope
 			// Used in split-screen setup.
 			m_CurrentEventSystem = EventSystem.current;
 
+			// If keyboard/mouse have no selection and we switch to controller with joystick, navigation calls OnMove(),
+			// but last selected object may not be updated since last update, yet. Fetch it to avoid exceptions below.
+			if (m_LastSelectedObject == null) {
+				m_LastSelectedObject = GetCurrentlySelectedObject();
+			}
+
 			if (SkipWrapTimeTreshold > 0f) {
 				m_OwnedEdgeSelectableIds.TryGetValue(m_LastSelectedObject.GetInstanceID(), out List<MoveDirection> edgeDirections);
 
@@ -905,24 +929,24 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			switch (eventData.moveDir) {
 				case MoveDirection.Up:
-					OnMoveWrapDynamic(WrapUp, selectable.navigation.selectOnUp, eventData);
+					OnMoveWrapDynamic(selectable, WrapUp, selectable.navigation.selectOnUp, eventData);
 					break;
 
 				case MoveDirection.Down:
-					OnMoveWrapDynamic(WrapDown, selectable.navigation.selectOnDown, eventData);
+					OnMoveWrapDynamic(selectable, WrapDown, selectable.navigation.selectOnDown, eventData);
 					break;
 
 				case MoveDirection.Left:
-					OnMoveWrapDynamic(WrapLeft, selectable.navigation.selectOnLeft, eventData);
+					OnMoveWrapDynamic(selectable, WrapLeft, selectable.navigation.selectOnLeft, eventData);
 					break;
 
 				case MoveDirection.Right:
-					OnMoveWrapDynamic(WrapRight, selectable.navigation.selectOnRight, eventData);
+					OnMoveWrapDynamic(selectable, WrapRight, selectable.navigation.selectOnRight, eventData);
 					break;
 			}
 		}
 
-		private void OnMoveWrapDynamic(WrapBehaviour wrapBehaviour, bool hasWrapLink, AxisEventData eventData)
+		private void OnMoveWrapDynamic(Selectable prevSelected, WrapBehaviour wrapBehaviour, bool hasWrapLink, AxisEventData eventData)
 		{
 			if (hasWrapLink)
 				return;
@@ -1026,6 +1050,18 @@ namespace DevLocker.GFrame.Input.UIScope
 					eventData.Use();
 					break;
 
+				case WrapMode.CustomWrapProvider:
+					if (wrapBehaviour.WrapProvider) {
+
+						nextSelectable = wrapBehaviour.WrapProvider.GetNextSelectable(this, prevSelected, eventData);
+
+						if (nextSelectable && nextSelectable.gameObject.activeInHierarchy) {
+							eventData.selectedObject = nextSelectable.gameObject;
+							eventData.Use();
+						}
+					}
+					break;
+
 				default: throw new NotSupportedException(wrapBehaviour.Mode.ToString());
 			}
 		}
@@ -1049,6 +1085,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				case UINavigationGroup.WrapMode.FirstSelectableOfNavigationGroup:
 				case UINavigationGroup.WrapMode.LastSelectableOfNavigationGroup:
 				case UINavigationGroup.WrapMode.FocusScope:
+				case UINavigationGroup.WrapMode.CustomWrapProvider:
 					return EditorGUIUtility.singleLineHeight;
 				case UINavigationGroup.WrapMode.TriggerEvent:
 					return EditorGUIUtility.singleLineHeight + EditorGUI.GetPropertyHeight(property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.Event)));
@@ -1069,8 +1106,23 @@ namespace DevLocker.GFrame.Input.UIScope
 				case UINavigationGroup.WrapMode.None:
 				case UINavigationGroup.WrapMode.Wrap:
 				case UINavigationGroup.WrapMode.WrapToNextLine:
-				case UINavigationGroup.WrapMode.Auto:
 					EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.Mode)), new GUIContent());
+					break;
+
+				case UINavigationGroup.WrapMode.Auto:
+					const float hintPadding = 4f;
+					position.width /= 2f;
+					EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.Mode)), new GUIContent());
+					position.width -= hintPadding;
+					position.x += position.width + hintPadding * 2;
+
+					Rect hintRect = position;
+					hintRect.width = 12f;
+					EditorGUI.LabelField(hintRect, new GUIContent("?", "(Optional) Filter auto selectable options to children of this Transform"));
+
+					position.x += hintRect.width;
+					position.width -= hintRect.width;
+					EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.Transform)), new GUIContent());
 					break;
 
 				case UINavigationGroup.WrapMode.Explicit:
@@ -1101,6 +1153,13 @@ namespace DevLocker.GFrame.Input.UIScope
 					position.height -= EditorGUIUtility.singleLineHeight;
 					position.y += EditorGUIUtility.singleLineHeight;
 					EditorGUI.PropertyField(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.Event)), new GUIContent());
+					break;
+
+				case UINavigationGroup.WrapMode.CustomWrapProvider:
+					position.width /= 2f;
+					EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.Mode)), new GUIContent());
+					position.x += position.width;
+					EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(UINavigationGroup.WrapBehaviour.WrapProvider)), new GUIContent());
 					break;
 
 				default:
