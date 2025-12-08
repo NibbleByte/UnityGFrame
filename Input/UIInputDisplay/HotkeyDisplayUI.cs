@@ -50,11 +50,17 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		{
 			public bool UseShortText = true;
 
-			[Tooltip("Enter how the hotkey text should be displayed. Use \"{Hotkey}\" to be replaced with the matched text.\nLeave empty to skip.")]
-			public string FormatText;
+			[FormerlySerializedAs("FormatText")]
+			[Tooltip("(Optional) Format selected binding display text if it doesn't use sprites.\n\"{binding}\" will be replaced with the binding display text.")]
+			public string FormatBindingTexts = "";
+			[Tooltip("(Optional) Format selected binding display text if it contains sprites.\n\"{binding}\" will be replaced with the binding display text.")]
+			public string FormatBindingSprites = "";
 
 			[Tooltip("Should default fallback text be used when no appropriate display data was found?")]
 			public IInputContext.InputBehaviourOverride FallbackToDefaultDisplayTexts;
+
+			[Tooltip("When hotkey is not visible only the text component is disabled, which may still affect the layout.\n\nEnable this to also set attached LayoutElement component to \"Ignore Layout\".")]
+			public bool DisableLayoutElementWhenHidden = false;
 		}
 
 		public InputActionReference InputAction => m_InputAction;
@@ -85,6 +91,8 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		[Tooltip("Optional - list of objects to be activated when hotkeys are displayed. Useful for labels indicating the result of the action.")]
 		public List<GameObject> AdditionalObjectsToActivate;
+
+		public event Action Refreshed;
 
 		public InputBindingDisplayData CurrentlyDisplayedData { get; private set; }
 		public bool DisplaysIcon { get; private set; }
@@ -185,10 +193,12 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 						if (!DisplayMode.KeepDisplayingLastDevice) {
 							Text.enabled = false;
 
-							if (m_LayoutElement) {
+							if (m_LayoutElement && ExtraSettings.DisableLayoutElementWhenHidden) {
 								m_LayoutElement.ignoreLayout = !Text.enabled;
 							}
 							SetAdditionalObjects(false);
+
+							Refreshed?.Invoke();
 							return;
 						}
 
@@ -207,10 +217,12 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 						if (!DisplayMode.KeepDisplayingLastDevice) {
 							Text.enabled = false;
 
-							if (m_LayoutElement) {
+							if (m_LayoutElement && ExtraSettings.DisableLayoutElementWhenHidden) {
 								m_LayoutElement.ignoreLayout = !Text.enabled;
 							}
 							SetAdditionalObjects(false);
+
+							Refreshed?.Invoke();
 							return;
 						}
 
@@ -269,25 +281,32 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 			displayedData.DeviceLayout = deviceLayout;
 			CurrentlyDisplayedData = displayedData;
-			DisplaysIcon = false;
 
 			string usedText = ExtraSettings.UseShortText && !string.IsNullOrWhiteSpace(CurrentlyDisplayedData.ShortText)
 				? CurrentlyDisplayedData.ShortText
 				: CurrentlyDisplayedData.Text
 				;
 
-			if (!string.IsNullOrEmpty(usedText) && !string.IsNullOrWhiteSpace(ExtraSettings.FormatText)) {
-				usedText = ExtraSettings.FormatText.Replace("{Hotkey}", usedText);
-			}
-
-			Text.enabled = CurrentlyDisplayedData.HasText;
-			Text.text = displayDataProvider.FormatBindingDisplayText(usedText);
+			bool hasText = !string.IsNullOrWhiteSpace(usedText);
 			DisplaysIcon = usedText != null ? usedText.Contains("<sprite") : false;
 
-			if (m_LayoutElement) {
+			if (hasText) {
+				string formatText = DisplaysIcon ? ExtraSettings.FormatBindingSprites : ExtraSettings.FormatBindingTexts;
+
+				if (!string.IsNullOrWhiteSpace(formatText)) {
+					usedText = formatText.Replace("{binding}", usedText);
+				}
+			}
+
+			Text.enabled = hasText;
+			Text.text = displayDataProvider.FormatBindingDisplayText(usedText);
+
+			if (m_LayoutElement && ExtraSettings.DisableLayoutElementWhenHidden) {
 				m_LayoutElement.ignoreLayout = !Text.enabled;
 			}
 			SetAdditionalObjects(Text.enabled);
+
+			Refreshed?.Invoke();
 		}
 
 		protected virtual void Reset()
