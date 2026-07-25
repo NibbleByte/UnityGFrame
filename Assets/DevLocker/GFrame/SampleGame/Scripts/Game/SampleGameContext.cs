@@ -28,6 +28,16 @@ namespace DevLocker.GFrame.SampleGame.Game
 			remove { InputContext.LastUsedInputControlSchemeChanged -= value; }
 		}
 
+		public event IInputContext.DeviceEventHandler ConnectingDevice {
+			add { InputContext.ConnectingDevice += value; }
+			remove { InputContext.ConnectingDevice -= value; }
+		}
+
+		public event IInputContext.DeviceEventHandler DisconnectingDevice {
+			add { InputContext.DisconnectingDevice += value; }
+			remove { InputContext.DisconnectingDevice -= value; }
+		}
+
 		public bool DeviceSupportsUINavigationSelection => InputContext.DeviceSupportsUINavigationSelection;
 
 		public InputDevice ForcedDevice { get => InputContext.ForcedDevice; set => InputContext.ForcedDevice = value; }
