@@ -216,6 +216,8 @@ namespace DevLocker.GFrame.Input
 			};
 		}
 
+		public delegate void DeviceEventHandler(InputDevice device);
+
 		/// <summary>
 		/// Used for overriding the default input behaviour.
 		/// </summary>
@@ -235,6 +237,16 @@ namespace DevLocker.GFrame.Input
 		/// Last device used got changed.
 		/// </summary>
 		event Action LastUsedInputControlSchemeChanged;
+
+		/// <summary>
+		/// Called when device got connected.
+		/// </summary>
+		event DeviceEventHandler ConnectingDevice;
+
+		/// <summary>
+		/// Called when device got removed.
+		/// </summary>
+		event DeviceEventHandler DisconnectingDevice;
 
 		/// <summary>
 		/// Associated input user.

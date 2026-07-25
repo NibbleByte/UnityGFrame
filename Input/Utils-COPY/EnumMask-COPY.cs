@@ -28,10 +28,17 @@ namespace DevLocker.GFrame.Utils
 
 			EditorGUI.BeginProperty(position, label, property);
 
+			var enumType = fieldInfo.FieldType;
+
 			EditorGUI.BeginChangeCheck();
-			int value = EditorGUI.MaskField(position, label, property.enumValueFlag, property.enumNames);
+			// MaskField() ignores the enum values and just enumerates them in the order they are defined.
+			// You can't have 1 << 2 and then jump directly to 1 << 8. This is why we use EnumFlagsField()
+			//int value = EditorGUI.MaskField(position, label, property.enumValueFlag, property.enumNames);
+
+			Enum value = EditorGUI.EnumFlagsField(position, label, (Enum)Enum.ToObject(enumType, property.enumValueFlag));
+
 			if (EditorGUI.EndChangeCheck()) {
-				property.intValue = value;
+				property.enumValueFlag = (int)(object)value;
 			}
 
 			EditorGUI.EndProperty();

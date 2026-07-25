@@ -1,9 +1,7 @@
 #if USE_INPUT_SYSTEM
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
@@ -28,6 +26,9 @@ namespace DevLocker.GFrame.Input.Contexts
 		public event Action LastUsedDeviceChanged;
 
 		public event Action LastUsedInputControlSchemeChanged;
+
+		public event IInputContext.DeviceEventHandler ConnectingDevice;
+		public event IInputContext.DeviceEventHandler DisconnectingDevice;
 
 		public InputUser User { get; private set; }
 
@@ -281,6 +282,10 @@ namespace DevLocker.GFrame.Input.Contexts
 					case InputDeviceChange.UsageChanged:
 					case InputDeviceChange.ConfigurationChanged:
 
+						if (change == InputDeviceChange.Added || change == InputDeviceChange.Reconnected) {
+							ConnectingDevice?.Invoke(device);
+						}
+
 						// Called when device configuration changes (for example keyboard layout / language), not on switching devices.
 						// Trigger event so UI gets refreshed properly.
 						m_LastUsedDevice = m_ForcedDevice ?? null;	// Make sure doesn't skip same device.
@@ -294,6 +299,12 @@ namespace DevLocker.GFrame.Input.Contexts
 				case InputDeviceChange.Removed:
 				case InputDeviceChange.Disabled:
 				case InputDeviceChange.Disconnected:
+
+					// Used mostly for editor stuff? Gets called on losing focus too.
+					if (change != InputDeviceChange.Disabled) {
+						DisconnectingDevice?.Invoke(device);
+					}
+
 					if (m_LastUsedDevice == device) {
 						OnInputSystemEvent(new InputEventPtr(), null);
 					}
