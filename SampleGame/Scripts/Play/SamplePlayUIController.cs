@@ -16,7 +16,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 	/// <summary>
 	/// Sample UI controller to switch states of the UI and expose methods for the UI buttons to call.
 	/// </summary>
-	public class SamplePlayUIController : MonoBehaviour
+	public class SamplePlayUIController : MonoBehaviour, ILevelLoadedListener
 	{
 		[Serializable]
 		public struct StatePanelBinds
@@ -34,18 +34,21 @@ namespace DevLocker.GFrame.SampleGame.Play
 
 		public StatePanelBinds[] StatePanels;
 
-		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected PlayerContext m_PlayerContext;
 
-		void Awake()
+		public void OnLevelLoaded(PlayerStatesContext context)
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			context.SetByType(out m_PlayerContext);
 
 			foreach (var bind in StatePanels) {
 				bind.Panel.SetActive(false);
 			}
 
 			SwitchState(CurrentState, true);
+		}
+
+		public void OnLevelUnloading()
+		{
 		}
 
 		public void SwitchState(PlayUIState state, bool? jumperMode = null)
@@ -99,13 +102,8 @@ namespace DevLocker.GFrame.SampleGame.Play
 
 		public void ExitToMainMenu()
 		{
-#if GFRAME_ASYNC
 			Game.SampleLevelsManager.Instance.SwitchLevelAsync(new MainMenu.SampleMainMenuLevelSupervisor());
 			//Game.SampleLevelsManager.Instance.SwitchLevelAsync(new MainMenu.SampleMainMenuLevelSupervisor());
-#else
-			Game.SampleLevelsManager.Instance.SwitchLevel(new MainMenu.SampleMainMenuLevelSupervisor());
-			//Game.SampleLevelsManager.Instance.SwitchLevel(new MainMenu.SampleMainMenuLevelSupervisor());
-#endif
 		}
 	}
 }

@@ -9,34 +9,27 @@ namespace DevLocker.GFrame.SampleGame.Game
 	/// </summary>
 	public class SampleLevelsManager : LevelsManager
 	{
-		public static SampleLevelsManager Instance { get; private set; }
+		public static new SampleLevelsManager Instance => (SampleLevelsManager) LevelsManager.Instance;
 
 		public SampleGameContext GameContext { get; private set; }
-
-		void Awake()
-		{
-			if (Instance) {
-				GameObject.DestroyImmediate(this);
-				return;
-			}
-
-			Instance = this;
-
-			if (transform.parent == null) {
-				DontDestroyOnLoad(gameObject);
-			}
-		}
-
-		void OnDestroy()
-		{
-			if (Instance == this) {
-				Instance = null;
-			}
-		}
 
 		public void SetGameContext(SampleGameContext gameContext)
 		{
 			GameContext = gameContext;
 		}
+
+#if UNITY_EDITOR
+		internal static string GetEditorSampleScenePath(string sampleSceneNameWithExtension)
+		{
+			string path = "Assets/DevLocker/GFrame/SampleGame/Scenes/" + sampleSceneNameWithExtension;
+			if (UnityEditor.AssetDatabase.AssetPathExists(path))
+				return path;
+
+			if (UnityEditor.AssetDatabase.AssetPathExists(path))
+				return path;
+
+			return "Packages/devlocker.gframe/SampleGame/Scenes/" + sampleSceneNameWithExtension;
+		}
+#endif
 	}
 }

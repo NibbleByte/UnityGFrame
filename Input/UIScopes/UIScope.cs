@@ -21,7 +21,6 @@ namespace DevLocker.GFrame.Input.UIScope
 		bool enabled { get; set; }
 	}
 
-#if USE_INPUT_SYSTEM
 	/// <summary>
 	/// Used for displaying InputActions state for debugging.
 	/// </summary>
@@ -37,7 +36,6 @@ namespace DevLocker.GFrame.Input.UIScope
 	{
 		void SetInputAction(UnityEngine.InputSystem.InputActionReference inputActionReference);
 	}
-#endif
 
 	/// <summary>
 	/// When working with more hotkeys, selections, etc. on screen, some conflicts may arise.
@@ -48,7 +46,7 @@ namespace DevLocker.GFrame.Input.UIScope
 	///
 	/// Note: Each scope belongs to a <see cref="PlayerScopeSet"/> - each player has it's own set of scopes with it's own navigation, hotkeys, selection etc.
 	///		  If there is only one player (i.e. no player root objects), global <see cref="PlayerScopeSet"/> is used.
-	///		  For more info check <see cref="PlayerContextUIRootObject"/>.
+	///		  For more info check <see cref="InputUIRootObject"/>.
 	/// </summary>
 	[SelectionBase]
 	[DisallowMultipleComponent]
@@ -101,10 +99,8 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		public List<UIScope> OnDisableScopes;
 
-#if USE_INPUT_SYSTEM
 		[Tooltip("Reset all input actions.\nThis will interrupt their progress and any gesture, drag, sequence will be canceled.")]
 		public bool ResetAllActionsOnEnable = true;
-#endif
 
 		public event Action Activated;
 		public event Action Focused;
@@ -140,7 +136,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// Focused scope which keeps it and all its parents active (and the rest will be inactive).
 		/// </summary>
 		/// <param name="playerRoot">Player root the scope is part of (in case of split-screen)</param>
-		public static UIScope FocusedScope(PlayerContextUIRootObject playerRoot)
+		public static UIScope FocusedScope(InputUIRootObject playerRoot)
 		{
 			s_PlayerSets.TryGetValue(playerRoot, out PlayerScopeSet playerSet);
 
@@ -151,7 +147,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// The focused scope plus all it's parents - top to bottom.
 		/// <param name="playerRoot">Player root the scope is part of (in case of split-screen)</param>
 		/// </summary>
-		public static IReadOnlyCollection<UIScope> GetActiveScopes(PlayerContextUIRootObject playerRoot)
+		public static IReadOnlyCollection<UIScope> GetActiveScopes(InputUIRootObject playerRoot)
 		{
 			s_PlayerSets.TryGetValue(playerRoot, out PlayerScopeSet playerSet);
 
@@ -162,7 +158,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// Get all registered scopes (including inactive ones).
 		/// <param name="playerRoot">Player root the scopes are part of (in case of split-screen)</param>
 		/// </summary>
-		public static IReadOnlyCollection<UIScope> GetRegisteredScopes(PlayerContextUIRootObject playerRoot)
+		public static IReadOnlyCollection<UIScope> GetRegisteredScopes(InputUIRootObject playerRoot)
 		{
 			s_PlayerSets.TryGetValue(playerRoot, out PlayerScopeSet playerSet);
 
@@ -172,18 +168,18 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// <summary>
 		/// Is currently changing of active and focused scopes happening right now.
 		/// </summary>
-		public static bool IsCurrentlySwitchingActiveScopes(PlayerContextUIRootObject playerRoot)
+		public static bool IsCurrentlySwitchingActiveScopes(InputUIRootObject playerRoot)
 		{
 			s_PlayerSets.TryGetValue(playerRoot, out PlayerScopeSet playerSet);
 
 			return playerSet?.ChangingActiveScopes ?? false;
 		}
 
-		private static Dictionary<PlayerContextUIRootObject, PlayerScopeSet> s_PlayerSets = new Dictionary<PlayerContextUIRootObject, PlayerScopeSet>();
+		private static Dictionary<InputUIRootObject, PlayerScopeSet> s_PlayerSets = new Dictionary<InputUIRootObject, PlayerScopeSet>();
 
 		// Player set used by this UIScope.
 		private PlayerScopeSet m_PlayerSet;
-		public PlayerContextUIRootObject PlayerContext { get; private set; }
+		public InputUIRootObject InputUIRoot { get; private set; }
 
 		public IReadOnlyList<IScopeElement> OwnedElements
 		{
@@ -302,9 +298,9 @@ namespace DevLocker.GFrame.Input.UIScope
 		protected virtual void Awake()
 		{
 			// Can be RootObject or RootForward.
-			IPlayerContext playerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			IInputUIRoot inputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			playerContext.AddSetupCallback((delayedSetup) => {
+			inputUIRoot.AddSetupCallback((delayedSetup) => {
 
 				bool result = Initialize();
 				if (!result) {
@@ -359,18 +355,18 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		public virtual bool Initialize()
 		{
-			PlayerContextUIRootObject playerContext = PlayerContextUtils.GetPlayerContextFor(gameObject).GetRootObject();
+			InputUIRootObject inputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject).GetRootObject();
 
 			// If using forwarder, it may not yet be setup. Will do delayed Initialize(). Check Update().
-			if (playerContext == null) {
+			if (inputUIRoot == null) {
 				return false;
 			}
 
-			PlayerContext = playerContext;
+			InputUIRoot = inputUIRoot;
 
-			if (!s_PlayerSets.TryGetValue(playerContext, out m_PlayerSet)) {
+			if (!s_PlayerSets.TryGetValue(inputUIRoot, out m_PlayerSet)) {
 				m_PlayerSet = new PlayerScopeSet();
-				s_PlayerSets.Add(playerContext, m_PlayerSet);
+				s_PlayerSets.Add(inputUIRoot, m_PlayerSet);
 			}
 
 			m_HasInitialized = true;
@@ -619,7 +615,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// Deactivate the current active scopes and reactivate them back, forcing full reinitialization.
 		/// NOTE: This will not rescan for new ScopeElements.
 		/// </summary>
-		public static void RefocusActiveScopes(PlayerContextUIRootObject playerUI)
+		public static void RefocusActiveScopes(InputUIRootObject playerUI)
 		{
 			s_PlayerSets.TryGetValue(playerUI, out PlayerScopeSet playerSet);
 
@@ -644,7 +640,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// </summary>
 		public static void RefocusActiveScopes()
 		{
-			foreach(PlayerContextUIRootObject playerUI in s_PlayerSets.Keys) {
+			foreach(InputUIRootObject playerUI in s_PlayerSets.Keys) {
 				RefocusActiveScopes(playerUI);
 			}
 		}
@@ -1082,8 +1078,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		protected void PreProcessInput(bool active)
 		{
-#if USE_INPUT_SYSTEM
-			var context = PlayerContext.InputContext;
+			var context = InputUIRoot.InputContext;
 
 			if (context == null) {
 				Debug.LogWarning($"[Input] {nameof(UIScope)} {name} can't be used if Unity Input System is not provided.", this);
@@ -1133,13 +1128,11 @@ namespace DevLocker.GFrame.Input.UIScope
 				}
 
 			}
-#endif
 		}
 
 		protected void PostProcessInput(bool active)
 		{
-#if USE_INPUT_SYSTEM
-			var context = PlayerContext.InputContext;
+			var context = InputUIRoot.InputContext;
 
 			if (context == null)
 				return;
@@ -1163,7 +1156,6 @@ namespace DevLocker.GFrame.Input.UIScope
 					context.PopActionsMask(this);
 				}
 			}
-#endif
 		}
 
 	}
@@ -1260,9 +1252,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				focusLayerProp.objectReferenceValue = null;
 			}
 
-#if USE_INPUT_SYSTEM
 			EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(UIScope.ResetAllActionsOnEnable)));
-#endif
 
 			serializedObject.ApplyModifiedProperties();
 
@@ -1312,14 +1302,13 @@ namespace DevLocker.GFrame.Input.UIScope
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.ObjectField(element as UnityEngine.Object, typeof(IScopeElement), true);
 
-#if USE_INPUT_SYSTEM
 					if (element is IHotkeysWithInputActions hotkeyElement) {
 
 
 						bool actionsActive = uiScope.enabled
 												&& uiScope.gameObject.activeInHierarchy
-												&& uiScope.PlayerContext?.InputContext != null
-												&& hotkeyElement.GetUsedActions(uiScope.PlayerContext.InputContext).Any(a => a.enabled);
+												&& uiScope.InputUIRoot?.InputContext != null
+												&& hotkeyElement.GetUsedActions(uiScope.InputUIRoot.InputContext).Any(a => a.enabled);
 
 						string activeStr = actionsActive ? "Active" : "Inactive";
 						GUI.color = actionsActive ? Color.green : Color.red;
@@ -1327,7 +1316,6 @@ namespace DevLocker.GFrame.Input.UIScope
 						GUILayout.Label(new GUIContent(activeStr, "Are the hotkey input actions active or not?"), GUILayout.ExpandWidth(false));
 						GUI.color = prevColor;
 					}
-#endif
 					EditorGUILayout.EndHorizontal();
 				}
 

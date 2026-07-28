@@ -12,7 +12,7 @@ namespace DevLocker.GFrame.SampleGame.UITester
 	/// <summary>
 	/// Generates some wiki entries.
 	/// </summary>
-	public class SampleUITesterWikiController : MonoBehaviour
+	public class SampleUITesterWikiController : MonoBehaviour, ILevelLoadedListener
 	{
 		public Button WikiEntryTab;
 		public GameObject WikiEntryContent;
@@ -23,11 +23,15 @@ namespace DevLocker.GFrame.SampleGame.UITester
 		public int WikiEntriesCount = 10;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
-		void Awake()
+		public void OnLevelLoaded(PlayerStatesContext context)
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
+		}
+
+		public void OnLevelUnloading()
+		{
 		}
 
 		public void Start()
@@ -60,7 +64,7 @@ namespace DevLocker.GFrame.SampleGame.UITester
 		{
 			// TODO: This doesn't work with PlayerInput component - returns only keyboard, even when clicking with mouse :(
 			// Don't snap when user is clicking with a pointer device.
-			if (m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse)
+			if (m_InputUIRoot.InputContext.GetLastUsedInputDevice() is Mouse)
 				return;
 
 

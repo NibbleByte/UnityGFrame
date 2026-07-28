@@ -67,7 +67,7 @@ namespace DevLocker.GFrame.SampleGame.Game
 			var inputContext = new InputComponentContext(playerInput, new InputActionsMaskedStack(playerControls), IInputContext.InputBehaviours.Default, BindingDisplayAssets);
 			playerControls.SetInputContext(inputContext);
 
-			PlayerContextUIRootObject.GlobalPlayerContext.SetupGlobal(uiInputModule.GetComponent<EventSystem>(), inputContext);
+			InputUIRootObject.GlobalUIRoot.SetupGlobal(uiInputModule.GetComponent<EventSystem>(), inputContext);
 
 
 			GameContext = new SampleGameContext(playerInput, playerControls, inputContext);
@@ -81,38 +81,22 @@ namespace DevLocker.GFrame.SampleGame.Game
 		{
 			// Boot game from current scene
 			if (GameObject.FindAnyObjectByType<PlayerInputManager>()) {
-#if GFRAME_ASYNC
 				SampleLevelsManager.Instance.SwitchLevelAsync(new Play.SampleMultiPlaySupervisor());
-#else
-				SampleLevelsManager.Instance.SwitchLevel(new Play.SampleMultiPlaySupervisor());
-#endif
 				return;
 			}
 
 			if (GameObject.FindAnyObjectByType<Play.SamplePlayerController>()) {
-#if GFRAME_ASYNC
 				SampleLevelsManager.Instance.SwitchLevelAsync(new Play.SamplePlaySupervisor());
-#else
-				SampleLevelsManager.Instance.SwitchLevel(new Play.SamplePlaySupervisor());
-#endif
 				return;
 			}
 
 			if (GameObject.FindAnyObjectByType<MainMenu.SampleMainMenuController>()) {
-#if GFRAME_ASYNC
 				SampleLevelsManager.Instance.SwitchLevelAsync(new MainMenu.SampleMainMenuLevelSupervisor());
-#else
-				SampleLevelsManager.Instance.SwitchLevel(new MainMenu.SampleMainMenuLevelSupervisor());
-#endif
 				return;
 			}
 
 			if (GameObject.FindAnyObjectByType<UITester.SampleUITesterController>()) {
-#if GFRAME_ASYNC
 				SampleLevelsManager.Instance.SwitchLevelAsync(new UITester.SampleUITesterLevelSupervisor());
-#else
-				SampleLevelsManager.Instance.SwitchLevel(new UITester.SampleUITesterLevelSupervisor());
-#endif
 				return;
 			}
 		}
@@ -127,7 +111,7 @@ namespace DevLocker.GFrame.SampleGame.Game
 		private void LateUpdate()
 		{
 			// Check for InputActions conflicts at the end of every frame and report.
-			var inputContext = PlayerContextUIRootObject.GlobalPlayerContext.InputContext;
+			var inputContext = InputUIRootObject.GlobalUIRoot.InputContext;
 			if (inputContext != null) {
 				var conflictsReport = inputContext.InputActionsMaskedStack.GetConflictingActionRequests(inputContext.GetUIActions());
 				if (!m_LastInputConflictsReport.Equals(conflictsReport) && conflictsReport.HasIssuesFound) {

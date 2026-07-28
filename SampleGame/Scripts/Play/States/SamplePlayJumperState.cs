@@ -1,7 +1,5 @@
 using DevLocker.GFrame.Input;
 using DevLocker.GFrame.SampleGame.Game;
-using System.Collections;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -21,7 +19,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				m_Selectable = GetComponentInParent<Selectable>();
 			}
 
-			ExecuteEvents.Execute(m_Selectable.gameObject, new PointerEventData(m_PlayerContext.EventSystem), ExecuteEvents.pointerClickHandler);
+			ExecuteEvents.Execute(m_Selectable.gameObject, new PointerEventData(m_InputUIRoot.EventSystem), ExecuteEvents.pointerClickHandler);
 			// Button.onClick.Invoke(); // This will ignore disabled state.
 		}
 
@@ -61,5 +59,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

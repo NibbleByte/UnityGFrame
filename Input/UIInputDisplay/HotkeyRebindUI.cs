@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,7 +34,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		public UnityEvent RebindReset;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		private InputActionRebindingExtensions.RebindingOperation m_RebindOperation;
 
@@ -45,14 +44,14 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				DisplayUI = GetComponent<HotkeyDisplayUI>();
 			}
 
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 		}
 
 
 		[ContextMenu("Start Rebind")]
 		public void StartRebind()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(HotkeyRebindUI)} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -63,13 +62,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				m_RebindOperation = null;
 			}
 
-			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction);
+			InputAction action = m_InputUIRoot.InputContext.FindActionFor(DisplayUI.InputAction);
 
 			if (DisplayUI.CurrentlyDisplayedData.Binding.id == Guid.Empty)
 				return;
 
 			// Actions need to be disabled in order to be re-bind.
-			m_PlayerContext.InputContext.PushOrSetActionsMask(this, new InputAction[0]);
+			m_InputUIRoot.InputContext.PushOrSetActionsMask(this, new InputAction[0]);
 
 			m_RebindOperation = action.PerformInteractiveRebinding();
 			m_RebindOperation.WithTargetBinding(DisplayUI.CurrentlyDisplayedData.BindingIndex);
@@ -102,7 +101,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		[ContextMenu("Cancel Rebind")]
 		public void CancelRebind()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(HotkeyRebindUI)} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -116,7 +115,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		[ContextMenu("Reset Bind")]
 		public void ResetBind()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(HotkeyRebindUI)} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -130,7 +129,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (DisplayUI.CurrentlyDisplayedData.Binding.id == Guid.Empty)
 				return;
 
-			InputAction action = m_PlayerContext.InputContext.FindActionFor(DisplayUI.InputAction);
+			InputAction action = m_InputUIRoot.InputContext.FindActionFor(DisplayUI.InputAction);
 			action.RemoveBindingOverride(DisplayUI.CurrentlyDisplayedData.BindingIndex);
 
 			DisplayUI.RefreshDisplay();
@@ -147,7 +146,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			m_RebindOperation.Dispose();
 			m_RebindOperation = null;
 
-			m_PlayerContext?.InputContext?.PopActionsMask(this);
+			m_InputUIRoot?.InputContext?.PopActionsMask(this);
 
 			DisplayUI.RefreshDisplay();
 			RebindFinished.Invoke();
@@ -163,7 +162,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			m_RebindOperation.Dispose();
 			m_RebindOperation = null;
 
-			m_PlayerContext?.InputContext?.PopActionsMask(this);
+			m_InputUIRoot?.InputContext?.PopActionsMask(this);
 
 			DisplayUI.RefreshDisplay();
 			RebindFinished.Invoke();
@@ -176,9 +175,8 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				m_RebindOperation = null;
 			}
 
-			m_PlayerContext = null;
+			m_InputUIRoot = null;
 		}
 	}
 
 }
-#endif

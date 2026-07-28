@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,7 +103,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		protected bool m_GameQuitting = false;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
@@ -116,7 +115,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (!m_HasInitialized)
 				return;
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(HotkeyDisplayUI)} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -125,7 +124,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			m_LastDevice = null;
 
 			if (m_InputAction) {
-				RefreshDisplay(m_PlayerContext.InputContext);
+				RefreshDisplay(m_InputUIRoot.InputContext);
 			}
 		}
 
@@ -245,7 +244,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 			InputAction action = context.FindActionFor(m_InputAction);
 			if (action == null) {
-				Debug.LogError($"[Input] {nameof(HotkeyDisplayUI)} couldn't find specified action {m_InputAction.name} for player {m_PlayerContext.PlayerName}", this);
+				Debug.LogError($"[Input] {nameof(HotkeyDisplayUI)} couldn't find specified action {m_InputAction.name} for player {m_InputUIRoot}", this);
 				return;
 			}
 
@@ -321,7 +320,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		protected virtual void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
 			m_LayoutElement = GetComponent<LayoutElement>();
 			if (Text == null) {
@@ -332,7 +331,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				}
 			}
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -346,17 +345,17 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (!m_HasInitialized)
 				return;
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(HotkeyDisplayUI)} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
 			m_LastDevice = null;
 
 			if (m_InputAction) {
-				RefreshDisplay(m_PlayerContext.InputContext);
+				RefreshDisplay(m_InputUIRoot.InputContext);
 
 			}
 		}
@@ -366,7 +365,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (!m_HasInitialized)
 				return;
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				if (!m_GameQuitting) {
 					Debug.LogWarning($"[Input] {nameof(HotkeyDisplayUI)} button {name} can't be used if Unity Input System is not provided.", this);
 					enabled = false;
@@ -377,7 +376,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			Text.enabled = false;
 			SetAdditionalObjects(false);
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
 		}
 
 		private void SetAdditionalObjects(bool active)
@@ -395,7 +394,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		private void OnLastUsedDeviceChanged()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(HotkeyDisplayUI)} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -404,7 +403,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			// Keyboard/Mouse check is done in the RefreshDisplay() method. Don't do it here.
 
 			if (m_InputAction) {
-				RefreshDisplay(m_PlayerContext.InputContext);
+				RefreshDisplay(m_InputUIRoot.InputContext);
 			}
 		}
 
@@ -494,4 +493,3 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 #endif
 
 }
-#endif

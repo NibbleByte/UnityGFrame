@@ -4,23 +4,19 @@ using UnityEngine.EventSystems;
 namespace DevLocker.GFrame.Input.Contexts
 {
 	/// <summary>
-	/// Use this to forward some UI objects input toward specific <see cref="PlayerContextUIRootObject"/>.
+	/// Use this to forward some UI objects input toward specific <see cref="InputUIRootObject"/>.
 	/// You can set the <see cref="m_PlayerRootObject"/> edit time or <see cref="PlayerRootObject"/> runtime via script.
 	/// </summary>
-	public class PlayerContextUIRootForwarder : MonoBehaviour, IPlayerContext
+	public class InputUIRootForwarder : MonoBehaviour, IInputUIRoot
 	{
 		// Used for edit time setup only.
-		[SerializeField] private PlayerContextUIRootObject m_PlayerRootObject;
+		[SerializeField] private InputUIRootObject m_PlayerRootObject;
 
-		public IPlayerContext PlayerRootObject { get; private set; }
+		public IInputUIRoot PlayerRootObject { get; private set; }
 
 		public bool IsActive => PlayerRootObject?.IsActive ?? false;
 
-		public string PlayerName => PlayerRootObject?.PlayerName ?? "";
-
 		public IInputContext InputContext => PlayerRootObject?.InputContext;
-
-		public PlayerStateStack StatesStack => PlayerRootObject?.StatesStack;
 
 		public EventSystem EventSystem => PlayerRootObject?.EventSystem;
 
@@ -28,11 +24,11 @@ namespace DevLocker.GFrame.Input.Contexts
 
 		public void SetSelectedGameObject(GameObject selected) => PlayerRootObject?.SetSelectedGameObject(selected);
 
-		public PlayerContextUIRootObject GetRootObject() => PlayerRootObject?.GetRootObject();
+		public InputUIRootObject GetRootObject() => PlayerRootObject?.GetRootObject();
 
-		private IPlayerContext.SetupCallbackDelegate m_CallbacksOnSetup;
+		private IInputUIRoot.SetupCallbackDelegate m_CallbacksOnSetup;
 
-		public void AddSetupCallback(IPlayerContext.SetupCallbackDelegate setupReadyCallback)
+		public void AddSetupCallback(IInputUIRoot.SetupCallbackDelegate setupReadyCallback)
 		{
 			if (PlayerRootObject != null) {
 				PlayerRootObject.AddSetupCallback(setupReadyCallback);
@@ -42,9 +38,9 @@ namespace DevLocker.GFrame.Input.Contexts
 		}
 
 		/// <summary>
-		/// Use this to setup the actual <see cref="PlayerContextUIRootObject"/> this instance forwards to.
+		/// Use this to setup the actual <see cref="InputUIRootObject"/> this instance forwards to.
 		/// </summary>
-		public void SetupTargetRootObject(PlayerContextUIRootObject rootObject)
+		public void SetupTargetRootObject(InputUIRootObject rootObject)
 		{
 			PlayerRootObject = rootObject;
 

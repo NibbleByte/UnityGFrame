@@ -1,7 +1,4 @@
-#if USE_INPUT_SYSTEM
 using DevLocker.GFrame.Input.UIInputDisplay;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,13 +6,13 @@ using UnityEngine.InputSystem;
 namespace DevLocker.GFrame.Input.Contexts
 {
 	/// <summary>
-	/// Add this next to <see cref="PlayerContextUIRootObject"/> to force selected device to be used.
+	/// Add this next to <see cref="InputUIRootObject"/> to force selected device to be used.
 	/// This will force only hotkey icons to display for it.
 	/// </summary>
 	public class ForceInputDevice : MonoBehaviour
 	{
 		[Tooltip("If empty will use the global player context.")]
-		public PlayerContextUIRootObject PlayerContext;
+		public InputUIRootObject InputUIRoot;
 
 		public InputBindingDisplayAsset ForcedDevice;
 
@@ -36,11 +33,11 @@ namespace DevLocker.GFrame.Input.Contexts
 
 		void Update()
 		{
-			if (PlayerContext == null) {
-				PlayerContext = PlayerContextUIRootObject.GlobalPlayerContext;
+			if (InputUIRoot == null) {
+				InputUIRoot = InputUIRootObject.GlobalUIRoot;
 			}
 
-			if (PlayerContext == null || !PlayerContext.IsActive || PlayerContext.InputContext == null)
+			if (InputUIRoot == null || !InputUIRoot.IsActive || InputUIRoot.InputContext == null)
 				return;
 
 			if (m_LastForcedDevice != ForcedDevice) {
@@ -52,22 +49,21 @@ namespace DevLocker.GFrame.Input.Contexts
 				}
 
 				if (m_LastForcedDevice == null) {
-					PlayerContext.InputContext.ForcedDevice = null;
+					InputUIRoot.InputContext.ForcedDevice = null;
 					return;
 				}
 
 				foreach(string layout in m_LastForcedDevice.MatchingDeviceLayouts) {
 					InputDevice device = InputSystem.GetDevice(layout);
 					if (device != null) {
-						PlayerContext.InputContext.ForcedDevice = device;
+						InputUIRoot.InputContext.ForcedDevice = device;
 						return;
 					}
 				}
 
-				PlayerContext.InputContext.ForcedDevice =
+				InputUIRoot.InputContext.ForcedDevice =
 					m_FakedDevice = InputSystem.AddDevice(m_LastForcedDevice.MatchingDeviceLayouts.First(), $"{nameof(ForceInputDevice)} - {m_LastForcedDevice.name}");
 			}
 		}
 	}
 }
-#endif

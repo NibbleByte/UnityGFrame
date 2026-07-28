@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -40,15 +38,15 @@ namespace DevLocker.GFrame.Input.UIScope
 		private Canvas m_Canvas;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
 		void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (VirtualMouse == null) {
@@ -76,7 +74,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			m_Canvas = GetComponentInParent<Canvas>();
 
-			m_PlayerContext.InputContext.LastUsedInputControlSchemeChanged += OnInputControlSchemeChanged;
+			m_InputUIRoot.InputContext.LastUsedInputControlSchemeChanged += OnInputControlSchemeChanged;
 			OnInputControlSchemeChanged();
 		}
 
@@ -85,13 +83,13 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			m_PlayerContext.InputContext.LastUsedInputControlSchemeChanged -= OnInputControlSchemeChanged;
+			m_InputUIRoot.InputContext.LastUsedInputControlSchemeChanged -= OnInputControlSchemeChanged;
 			SetControllerCursorState(false);
 		}
 
 		private void OnInputControlSchemeChanged()
 		{
-			bool isController = m_PlayerContext.InputContext.GetLastUsedInputControlScheme().name == ControllerScheme;
+			bool isController = m_InputUIRoot.InputContext.GetLastUsedInputControlScheme().name == ControllerScheme;
 			SetControllerCursorState(isController);
 		}
 
@@ -216,5 +214,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

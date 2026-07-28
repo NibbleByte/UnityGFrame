@@ -5,40 +5,37 @@ using UnityEngine;
 namespace DevLocker.GFrame.UIUtils
 {
 	/// <summary>
-	/// Will deactivate <see cref="CanvasGroup.blocksRaycasts"/> if <see cref="PlayerContextUIRootObject.IsLevelLoading"/> is set to true.
+	/// Will deactivate <see cref="CanvasGroup.blocksRaycasts"/> if <see cref="InputUIRootObject.IsLevelLoading"/> is set to true.
 	/// </summary>
 	[RequireComponent(typeof(CanvasGroup))]
 	public class UIDisableCanvasGroupOnLevelLoading : MonoBehaviour
 	{
 		private CanvasGroup m_CanvasGroup;
 
-		private PlayerContextUIRootObject m_PlayerContext;
-
 		private bool m_LastIsLevelLoading;
 
-		void Awake()
+		// Use Start() to make sure the player context association is already in place.
+		void Start()
 		{
 			m_CanvasGroup = GetComponent<CanvasGroup>();
 			m_CanvasGroup.blocksRaycasts = false;
 			m_LastIsLevelLoading = true;
-
-			PlayerContextUtils.GetPlayerContextFor(gameObject).AddSetupCallback((delayedSetup) => {
-				m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject).GetRootObject();
-			});
 		}
 
 		void Update()
 		{
-			if (m_PlayerContext == null || m_CanvasGroup == null)
+			if (LevelsManager.Instance == null || m_CanvasGroup == null)
 				return;
+
+			bool isLevelLoading = LevelsManager.Instance.IsChangingLevel;
 
 			// Set the canvas group only if level loading flag changed. Others may also set the canvas during states change etc.
-			if (m_LastIsLevelLoading == m_PlayerContext.IsLevelLoading)
+			if (m_LastIsLevelLoading == isLevelLoading)
 				return;
 
-			m_LastIsLevelLoading = m_PlayerContext.IsLevelLoading;
+			m_LastIsLevelLoading = isLevelLoading;
 
-			m_CanvasGroup.blocksRaycasts = !m_PlayerContext.IsLevelLoading;
+			m_CanvasGroup.blocksRaycasts = !isLevelLoading;
 		}
 
 		void OnDestroy()

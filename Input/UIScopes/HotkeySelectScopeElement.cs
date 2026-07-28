@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -21,7 +19,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				m_Selectable = GetComponentInParent<Selectable>();
 			}
 
-			m_PlayerContext.SetSelectedGameObject(gameObject);
+			m_InputUIRoot.SetSelectedGameObject(gameObject);
 		}
 
 		protected override void OnValidate()
@@ -37,5 +35,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

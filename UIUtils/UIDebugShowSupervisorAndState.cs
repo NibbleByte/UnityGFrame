@@ -19,33 +19,24 @@ namespace DevLocker.GFrame.UIUtils
 		private ILevelSupervisor m_CurrentLevelSupervisor;
 		private IPlayerState m_CurrentPlayerState;
 
-		private LevelsManager m_LevelsManager;
-
-		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected PlayerContext m_PlayerContext;
 
 		void Awake()
 		{
 			if (SupervisorText) SupervisorText.text = string.Empty;
 			if (StateText) StateText.text = string.Empty;
-
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
 		}
 
 		void Update()
 		{
-			if (m_LevelsManager == null) {
+			if (LevelsManager.Instance.LevelSupervisor == null)
+				return;
 
-				// Assuming there is only one instance.
-				// Singleton (if present) is implemented by the user code which is not accessible here.
-				m_LevelsManager = GameObject.FindAnyObjectByType<LevelsManager>();
-
-				if (m_LevelsManager == null)
-					return;
+			if (m_PlayerContext == null) {
+				m_PlayerContext = LevelsManager.Instance.GetPlayerContextFor(gameObject);
 			}
 
-
-			ILevelSupervisor nextSupervisor = m_LevelsManager.LevelSupervisor;
+			ILevelSupervisor nextSupervisor = LevelsManager.Instance.LevelSupervisor;
 			IPlayerState nextState = m_PlayerContext.StatesStack?.CurrentState;
 
 			if (SupervisorText && nextSupervisor != m_CurrentLevelSupervisor) {

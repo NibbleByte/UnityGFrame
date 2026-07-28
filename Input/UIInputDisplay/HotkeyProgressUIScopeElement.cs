@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using DevLocker.GFrame.Input.UIScope;
 using System;
 using System.Collections.Generic;
@@ -59,7 +57,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		protected bool m_ActionPerformed { get; private set; } = false;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
@@ -100,9 +98,9 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		protected virtual void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -114,7 +112,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		protected virtual void OnDestroy()
 		{
 			// Remove references for easier memory profiling and debugging. NOTE: if object was never awaken, this won't get executed.
-			m_PlayerContext = null;
+			m_InputUIRoot = null;
 
 			Started.RemoveAllListeners();
 			Cancelled.RemoveAllListeners();
@@ -126,7 +124,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (!m_HasInitialized)
 				return;
 
-			m_InputActionCached = GetUsedActions(m_PlayerContext.InputContext).FirstOrDefault();
+			m_InputActionCached = GetUsedActions(m_InputUIRoot.InputContext).FirstOrDefault();
 
 			m_HasContinuesInteractionsCached = HasContinuesInteractions();
 
@@ -173,7 +171,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		{
 			// Copy-pasted from HotkeyBaseScopeElement
 
-			if (PlayerContextUtils.ShouldSkipHotkey(m_PlayerContext, SkipHotkey))
+			if (InputContextUtils.ShouldSkipHotkey(m_InputUIRoot, SkipHotkey))
 				return;
 
 			if (!Utils.UIUtils.IsClickable(gameObject))
@@ -188,7 +186,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		{
 			// Copy-pasted from HotkeyBaseScopeElement
 
-			if (PlayerContextUtils.ShouldSkipHotkey(m_PlayerContext, SkipHotkey))
+			if (InputContextUtils.ShouldSkipHotkey(m_InputUIRoot, SkipHotkey))
 				return;
 
 			if (!Utils.UIUtils.IsClickable(gameObject))
@@ -204,7 +202,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		{
 			// Copy-pasted from HotkeyBaseScopeElement
 
-			if (PlayerContextUtils.ShouldSkipHotkey(m_PlayerContext, SkipHotkey))
+			if (InputContextUtils.ShouldSkipHotkey(m_InputUIRoot, SkipHotkey))
 				return;
 
 			if (!Utils.UIUtils.IsClickable(gameObject))
@@ -274,5 +272,3 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		}
 	}
 }
-
-#endif

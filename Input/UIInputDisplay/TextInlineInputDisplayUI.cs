@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,18 +100,18 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
 		void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
 			m_Text = GetComponent<TextMeshProUGUI>();
 			m_LayoutElement = GetComponent<LayoutElement>();
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -135,13 +134,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				//TMPro_EventManager.TEXT_CHANGED_EVENT.Add(OnTextChangeFinished);
 			}
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(TextInlineInputDisplayUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
 
 			OnLastUsedDeviceChanged();
 
@@ -160,7 +159,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				m_Text.UnregisterDirtyLayoutCallback(OnTextLayoutChanged);
 			}
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(TextInlineInputDisplayUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -172,7 +171,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				}
 			}
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
 		}
 
 		void OnDestroy()
@@ -186,13 +185,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		public void RefreshTextInputSprites()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(TextInlineInputDisplayUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			var currentProvider = m_PlayerContext.InputContext.GetCurrentDisplayDataProvider();
+			var currentProvider = m_InputUIRoot.InputContext.GetCurrentDisplayDataProvider();
 			if (currentProvider == null)
 				return;
 
@@ -251,7 +250,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 					}
 				}
 
-				InputAction action = m_PlayerContext.InputContext.FindActionFor(actionName);
+				InputAction action = m_InputUIRoot.InputContext.FindActionFor(actionName);
 
 				string displayText = GetDisplayTextFor(action, currentProvider, bindingNumberToUse, compositePartNumberToUse);
 				if (!string.IsNullOrEmpty(displayText)) {
@@ -414,13 +413,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		private void OnLastUsedDeviceChanged()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(TextInlineInputDisplayUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			var currentProvider = m_PlayerContext.InputContext.GetCurrentDisplayDataProvider();
+			var currentProvider = m_InputUIRoot.InputContext.GetCurrentDisplayDataProvider();
 			if (currentProvider == null)
 				return;
 
@@ -472,4 +471,3 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 	}
 #endif
 }
-#endif

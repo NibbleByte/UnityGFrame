@@ -28,47 +28,27 @@ namespace DevLocker.GFrame.UIUtils
 
 		private CanvasGroup m_CanvasGroup;
 
-#if GFRAME_ASYNC
 		public async Task ShowAsync()
-#else
-		public IEnumerator Show()
-#endif
 		{
 			m_StartTime = Now;
 			m_StartAlpha = 0.0f;
 			m_EndAlpha = 1.0f;
 
-#if GFRAME_ASYNC
 			await UpdateProgressAsync();
-#else
-			yield return UpdateProgress();
-#endif
 		}
 
-#if GFRAME_ASYNC
 		public async Task HideAsync()
-#else
-		public IEnumerator Hide()
-#endif
 		{
 			int startFrame = Time.frameCount;
 			while(WaitFramesBeforeHide > 0 && Time.frameCount - startFrame < WaitFramesBeforeHide) {
-#if GFRAME_ASYNC
 				await Task.Yield();
-#else
-				yield return null;
-#endif
 			}
 
 			m_StartTime = Now;
 			m_StartAlpha = 1.0f;
 			m_EndAlpha = 0.0f;
 
-#if GFRAME_ASYNC
 			await UpdateProgressAsync();
-#else
-			yield return UpdateProgress();
-#endif
 
 			gameObject.SetActive(false);
 		}
@@ -85,11 +65,7 @@ namespace DevLocker.GFrame.UIUtils
 			gameObject.SetActive(false);
 		}
 
-#if GFRAME_ASYNC
 		private async Task UpdateProgressAsync()
-#else
-		private IEnumerator UpdateProgress()
-#endif
 		{
 			m_CanvasGroup.alpha = m_StartAlpha;
 
@@ -101,12 +77,7 @@ namespace DevLocker.GFrame.UIUtils
 				progress = Mathf.Clamp01(progress);
 
 				m_CanvasGroup.alpha = Mathf.Lerp(m_StartAlpha, m_EndAlpha, progress);
-
-#if GFRAME_ASYNC
 				await Task.Yield();
-#else
-				yield return null;
-#endif
 			}
 
 			m_CanvasGroup.alpha = m_EndAlpha;

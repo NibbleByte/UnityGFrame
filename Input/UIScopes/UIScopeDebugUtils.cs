@@ -82,7 +82,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 				if (Application.isPlaying) {
 					scopeElements = scope.OwnedElements.ToList();
-					context = scope.PlayerContext?.InputContext;
+					context = scope.InputUIRoot?.InputContext;
 				} else {
 					var directChildScopes = new List<UIScope>();
 					UIScope.ScanForOwnedScopeElements(scope, scope.transform, scopeElements, directChildScopes);
