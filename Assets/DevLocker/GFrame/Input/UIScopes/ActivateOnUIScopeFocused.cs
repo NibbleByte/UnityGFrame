@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -154,5 +152,3 @@ namespace DevLocker.GFrame.Input.UIScope
 	}
 #endif
 }
-
-#endif

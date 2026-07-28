@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -357,4 +356,3 @@ namespace DevLocker.GFrame.Input.Contexts
 		private static readonly FourCC IMES_EventType = new FourCC("IMES");
 	}
 }
-#endif

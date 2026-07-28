@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.GFrame
 {
 	/// <summary>
 	/// Single player state. It can be different playing modes (walking, driving, swimming) or UI screens (Menu, Game, Options).

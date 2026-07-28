@@ -1,8 +1,6 @@
 using DevLocker.GFrame.Input;
-using DevLocker.GFrame.Input.Contexts;
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -13,6 +11,9 @@ namespace DevLocker.GFrame
 	/// </summary>
 	public class LevelsManager : MonoBehaviour
 	{
+		// HINT: If you inherit this class, make your own Instance property with your own type and use the "new" keyword to hide this one.
+		public static LevelsManager Instance { get; protected set; }
+
 		/// <summary>
 		/// Assign this if you want to show / hide loading screen between your levels (e.g. fade out effects).
 		/// You may assign this multiple times based on your needs and next level to load.
@@ -53,13 +54,37 @@ namespace DevLocker.GFrame
 		/// </summary>
 		public event Action LevelLoadedAndShownCallOnce;
 
+		protected virtual void Awake()
+		{
+			if (Instance) {
+				GameObject.DestroyImmediate(this);
+				return;
+			}
+
+			Instance = this;
+
+			if (transform.parent == null) {
+				DontDestroyOnLoad(gameObject);
+			}
+		}
+
+		protected virtual void OnDestroy()
+		{
+			if (Instance == this) {
+				Instance = null;
+			}
+		}
+
 		protected virtual void Update()
 		{
+			if (LevelSupervisor == null)
+				return;
+
 			if (LevelSupervisor is IUpdateListener updateSupervisor) {
 				updateSupervisor.Update();
 			}
 
-			foreach(PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
+			foreach(PlayerContext playerContext in LevelSupervisor.PlayerContexts) {
 
 				if (playerContext.StatesStack?.CurrentState is IUpdateListener updateState && !playerContext.StatesStack.ChangingStates) {
 					updateState.Update();
@@ -69,11 +94,13 @@ namespace DevLocker.GFrame
 
 		protected virtual void FixedUpdate()
 		{
+			if (LevelSupervisor == null)
+				return;
+
 			if (LevelSupervisor is IFixedUpdateListener updateSupervisor) {
 				updateSupervisor.FixedUpdate();
 			}
-
-			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
+			foreach (PlayerContext playerContext in LevelSupervisor.PlayerContexts) {
 
 				if (playerContext.StatesStack?.CurrentState is IFixedUpdateListener updateState && !playerContext.StatesStack.ChangingStates) {
 					updateState.FixedUpdate();
@@ -83,11 +110,14 @@ namespace DevLocker.GFrame
 
 		protected virtual void LateUpdate()
 		{
+			if (LevelSupervisor == null)
+				return;
+
 			if (LevelSupervisor is ILateUpdateListener updateSupervisor) {
 				updateSupervisor.LateUpdate();
 			}
 
-			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
+			foreach (PlayerContext playerContext in LevelSupervisor.PlayerContexts) {
 
 				if (playerContext.StatesStack?.CurrentState is ILateUpdateListener updateState && !playerContext.StatesStack.ChangingStates) {
 					updateState.LateUpdate();
@@ -96,68 +126,93 @@ namespace DevLocker.GFrame
 
 		}
 
-		#region Global Player State
+
 		/// <summary>
-		/// Push state to the top of the state stack. Can pop it out to the previous state later on.
-		/// Works with the <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>. Don't use in split-screen games.
+		/// Returns <see cref="PlayerContext"/> for the provided <see cref="GameObject"/>.
+		/// If there is only one player it always returns that one no matter the object (simplification for single player games).
+		/// For games with more than one player make sure the <see cref="PlayerContext.AssociatedRoots"/> are already in place.
 		/// </summary>
-		public void PushGlobalState(IPlayerState state)
+		public PlayerContext GetPlayerContextFor(GameObject gameObject)
 		{
-			PlayerContextUIRootObject.GlobalPlayerContext.StatesStack.PushState(state);
+			if (gameObject == null)
+				throw new ArgumentNullException(nameof(gameObject));
+
+			if (LevelSupervisor == null) {
+				Debug.LogError($"[GFrame] Can't get player context for {gameObject} as there is no level supervisor set.", gameObject);
+				return null;
+			}
+
+			if (LevelSupervisor.PlayerContexts.Count == 0) {
+				Debug.LogError($"[GFrame] Can't get player context for {gameObject} as there are no player contexts in the level supervisor {LevelSupervisor}.", gameObject);
+				return null;
+			}
+
+			if (LevelSupervisor.PlayerContexts.Count == 1)
+				return LevelSupervisor.PlayerContexts.First();
+
+			return LevelSupervisor.PlayerContexts.FirstOrDefault(pc => pc.AssociatedRoots.Any(root => root != null && gameObject.transform.IsChildOf(root.transform)));
+		}
+
+		#region Primary Player State
+
+		/// <summary>
+		/// Push state to the top of the state stack for the primary player. Can pop it out to the previous state later on.
+		/// </summary>
+		public void PushStateForPrimaryPlayer(IPlayerState state)
+		{
+			LevelSupervisor.PlayerContexts.First().StatesStack.PushState(state);
 		}
 
 		/// <summary>
-		/// Clears the state stack of any other states and pushes the provided one.
-		/// Works with the <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>. Don't use in split-screen games.
+		/// Clears the state stack of any other states and pushes the provided one for the primary player.
 		/// </summary>
-		public void SetGlobalState(IPlayerState state)
+		public void SetStateForPrimaryPlayer(IPlayerState state)
 		{
-			PlayerContextUIRootObject.GlobalPlayerContext.StatesStack.SetState(state);
+			LevelSupervisor.PlayerContexts.First().StatesStack.SetState(state);
 		}
 
 		/// <summary>
-		/// Pop a single state from the state stack.
-		/// Works with the <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>. Don't use in split-screen games.
+		/// Pop a single state from the state stack for the primary player.
 		/// </summary>
-		public void PopGlobalState()
+		public void PopStateForPrimaryPlayer()
 		{
-			PlayerContextUIRootObject.GlobalPlayerContext.StatesStack.PopState();
+			LevelSupervisor.PlayerContexts.First().StatesStack.PopState();
 		}
 
 		/// <summary>
-		/// Pops multiple states from the state stack.
-		/// Works with the <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>. Don't use in split-screen games.
+		/// Pops multiple states from the state stack for the primary player.
 		/// </summary>
-		public void PopGlobalStates(int count)
+		public void PopStatesForPrimaryPlayer(int count)
 		{
-			PlayerContextUIRootObject.GlobalPlayerContext.StatesStack.PopStates(count);
+			LevelSupervisor.PlayerContexts.First().StatesStack.PopStates(count);
 		}
 
 		/// <summary>
-		/// Pop and push back the state at the top. Will trigger changing state events.
-		/// Works with the <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>. Don't use in split-screen games.
+		/// Pop and push back the state at the top. Will trigger changing state events for the primary player.
 		/// </summary>
-		public void ReenterCurrentGlobalState()
+		public void ReenterCurrentStateForPrimaryPlayer()
 		{
-			PlayerContextUIRootObject.GlobalPlayerContext.StatesStack.ReenterCurrentState();
+			LevelSupervisor.PlayerContexts.First().StatesStack.ReenterCurrentState();
 		}
 
 		/// <summary>
 		/// Change the current state and add it to the state stack.
 		/// Will notify the state itself.
-		/// Any additional state changes that happened in the meantime will be queued and executed after the current change finishes.
-		/// Works with the <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>. Don't use in split-screen games.
+		/// Any additional state changes that happened in the meantime will be queued and executed after the current change finishes for the primary player.
 		/// </summary>
-		public void ChangeGlobalState(IPlayerState state, StackAction stackAction)
+		public void ChangeStateForPrimaryPlayer(IPlayerState state, StackAction stackAction)
 		{
-			PlayerContextUIRootObject.GlobalPlayerContext.StatesStack.ChangeState(state, stackAction);
+			LevelSupervisor.PlayerContexts.First().StatesStack.ChangeState(state, stackAction);
 		}
 
 		#endregion
 
 
-#if GFRAME_ASYNC
-
+		/// <summary>
+		/// Switch to another level supervisor. Will unload the current one and load the next one.
+		/// Your <see cref="ILevelSupervisor"/> implementation should handle the loading and unloading of the level itself,
+		/// setup player contexts and their state stacks, call <see cref="ILevelLoadedListener"/> events on scene objects, etc.
+		/// </summary>
 		public async void SwitchLevelAsync(ILevelSupervisor nextLevel)
 		{
 			if (IsChangingLevel && LevelSupervisor != null) {
@@ -168,9 +223,6 @@ namespace DevLocker.GFrame
 			NextLevelSupervisor = nextLevel;
 			ILevelSupervisor prevLevel = LevelSupervisor;
 
-			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
-				playerContext.IsLevelLoading = true;
-			}
 
 			try {
 
@@ -182,7 +234,7 @@ namespace DevLocker.GFrame
 
 					await UnloadingSupervisorAsync();
 
-					foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
+					foreach (PlayerContext playerContext in LevelSupervisor.PlayerContexts) {
 
 						if (playerContext.StatesStack != null) {
 							playerContext.DisposePlayerStack();
@@ -231,14 +283,6 @@ namespace DevLocker.GFrame
 
 				if (!OnException(prevLevel, nextLevel, ex)) {
 					throw;
-				}
-
-			} finally {
-
-				if (Application.isPlaying) {
-					foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
-						playerContext.IsLevelLoading = false;
-					}
 				}
 			}
 		}
@@ -293,140 +337,6 @@ namespace DevLocker.GFrame
 		{
 			return false;
 		}
-
-#else
-		/// <summary>
-		/// If coroutines fail, use this to reset the changing level flag so you can switch again. For example switch to fall-back level.
-		/// </summary>
-		public void RestartChangingLevelFlag()
-		{
-			IsChangingLevel = false;
-			NextLevelSupervisor = null;
-
-			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
-				playerContext.IsLevelLoading = false;
-			}
-		}
-
-		public void SwitchLevel(ILevelSupervisor nextLevel)
-		{
-			StartCoroutine(SwitchLevelCrt(nextLevel));
-		}
-
-		public IEnumerator SwitchLevelCrt(ILevelSupervisor nextLevel)
-		{
-			if (IsChangingLevel && LevelSupervisor != null) {
-				throw new InvalidOperationException($"Level is already changing. Can't switch to {nextLevel} while change is in progress.");
-			}
-
-			// If exception happens in some of the coroutines, flag will remain set forever.
-			// Use the RestartChangingLevelFlag() to restore it and switch back to fall-back level.
-			IsChangingLevel = true;
-			NextLevelSupervisor = nextLevel;
-
-			bool hadPreviousSupervisor = false;
-
-			if (LevelSupervisor != null) {
-
-				hadPreviousSupervisor = true;
-
-				yield return UnloadingSupervisorCrt();
-
-				if (ShowLoadingScreenBeforeLevelStates && LevelLoadingScreen != null) {
-					yield return LevelLoadingScreen.Show();
-				}
-
-				foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
-
-					if (playerContext.StatesStack != null) {
-						playerContext.DisposePlayerStack();
-					}
-				}
-
-
-				if (!ShowLoadingScreenBeforeLevelStates && LevelLoadingScreen != null) {
-					yield return LevelLoadingScreen.Show();
-				}
-
-				yield return LevelSupervisor.Unload();
-
-				yield return UnloadedSupervisorCrt();
-
-			} else if (LevelLoadingScreen != null) {
-				LevelLoadingScreen.HideInstantly();
-			}
-
-			LevelSupervisor = nextLevel;
-
-			yield return LoadingSupervisorCrt();
-
-			yield return nextLevel.Load();
-
-			// Avoid first show of loading screen when the game starts.
-			if (hadPreviousSupervisor && LevelLoadingScreen != null) {
-
-				// Wait 1 frame for performance to stabilize (or transition animations will be skipped).
-				yield return null;
-
-				yield return LevelLoadingScreen.Hide();
-			}
-
-			yield return LoadedSupervisorCrt();
-
-			LevelLoadedAndShownCallOnce?.Invoke();
-			LevelLoadedAndShownCallOnce = null;
-
-			IsChangingLevel = false;
-			NextLevelSupervisor = null;
-
-			foreach (PlayerContextUIRootObject playerContext in PlayerContextUIRootObject.AllPlayerUIRoots) {
-				playerContext.IsLevelLoading = false;
-			}
-		}
-
-		/// <summary>
-		/// Override this according to your needs.
-		/// </summary>
-		protected virtual IEnumerator UnloadingSupervisorCrt()
-		{
-			Debug.Log($"[GFrame] Unloading level supervisor {LevelSupervisor}");
-			UnloadingSupervisor?.Invoke();
-
-			yield break;
-		}
-
-		/// <summary>
-		/// Override this according to your needs.
-		/// </summary>
-		protected virtual IEnumerator UnloadedSupervisorCrt()
-		{
-			UnloadedSupervisor?.Invoke();
-
-			yield break;
-		}
-
-		/// <summary>
-		/// Override this according to your needs.
-		/// </summary>
-		protected virtual IEnumerator LoadingSupervisorCrt()
-		{
-			Debug.Log($"[GFrame] Loading level supervisor {LevelSupervisor}");
-			LoadingSupervisor?.Invoke();
-
-			yield break;
-		}
-
-		/// <summary>
-		/// Override this according to your needs.
-		/// </summary>
-		protected virtual IEnumerator LoadedSupervisorCrt()
-		{
-			LoadedSupervisor?.Invoke();
-
-			yield break;
-		}
-
-#endif
 
 	}
 }

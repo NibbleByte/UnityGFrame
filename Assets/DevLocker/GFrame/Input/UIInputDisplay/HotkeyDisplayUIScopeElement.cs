@@ -1,7 +1,5 @@
-#if USE_INPUT_SYSTEM
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace DevLocker.GFrame.Input.UIInputDisplay
 {
@@ -16,4 +14,3 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 	}
 
 }
-#endif

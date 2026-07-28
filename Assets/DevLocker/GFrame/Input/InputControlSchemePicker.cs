@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -82,4 +81,3 @@ namespace DevLocker.GFrame.Input
 #endif
 
 }
-#endif

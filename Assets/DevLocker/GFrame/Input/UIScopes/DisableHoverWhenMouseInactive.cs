@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -14,15 +12,15 @@ namespace DevLocker.GFrame.Input.UIScope
 	public class DisableHoverWhenMouseInactive : MonoBehaviour
 	{
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
 		void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -36,7 +34,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
 		}
 
 		void OnDisable()
@@ -44,13 +42,13 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
 			SetMouseHoverUsage(true);
 		}
 
 		private void OnLastUsedDeviceChanged()
 		{
-			bool isMouse = m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse;
+			bool isMouse = m_InputUIRoot.InputContext.GetLastUsedInputDevice() is Mouse;
 			SetMouseHoverUsage(isMouse);
 		}
 
@@ -63,5 +61,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

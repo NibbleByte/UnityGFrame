@@ -13,7 +13,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private GameObject m_LastSelectedObject;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		void Reset()
 		{
@@ -26,7 +26,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				Scope = GetComponent<UIScope>();
 			}
 
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 		}
 
 		/// <summary>
@@ -35,16 +35,16 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// </summary>
 		void LateUpdate()
 		{
-			if (!m_PlayerContext.IsActive)
+			if (!m_InputUIRoot.IsActive)
 				return;
 
 			// Don't steal selection controller selection opportunity.
-			SelectionController activeSelectionController = SelectionController.GetActiveInstanceFor(m_PlayerContext.GetRootObject());
+			SelectionController activeSelectionController = SelectionController.GetActiveInstanceFor(m_InputUIRoot.GetRootObject());
 			if (activeSelectionController && activeSelectionController.IsSelectRequested)
 				return;
 
-			if (m_LastSelectedObject != m_PlayerContext.SelectedGameObject) {
-				m_LastSelectedObject = m_PlayerContext.SelectedGameObject;
+			if (m_LastSelectedObject != m_InputUIRoot.SelectedGameObject) {
+				m_LastSelectedObject = m_InputUIRoot.SelectedGameObject;
 
 				if (!Scope.IsActive && m_LastSelectedObject && m_LastSelectedObject.transform.IsChildOf(transform) && m_LastSelectedObject.GetComponentInParent<UIScope>() == Scope) {
 					Scope.Focus();

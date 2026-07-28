@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -37,17 +35,17 @@ namespace DevLocker.GFrame.Input.UIScope
 		{
 			base.OnContextReady();
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged += OnLastUsedDeviceChanged;
 		}
 
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
 
-			if (!m_PlayerContext.IsActive || !m_HasInitialized)
+			if (!m_InputUIRoot.IsActive || !m_HasInitialized)
 				return;
 
-			m_PlayerContext.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
+			m_InputUIRoot.InputContext.LastUsedDeviceChanged -= OnLastUsedDeviceChanged;
 		}
 
 		protected override void OnEnable()
@@ -82,7 +80,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			m_LastInteractable = m_Button.IsInteractable() && m_Button.enabled;
 
-			bool isController = m_PlayerContext.InputContext.GetLastUsedInputDevice() is Gamepad;
+			bool isController = m_InputUIRoot.InputContext.GetLastUsedInputDevice() is Gamepad;
 
 			foreach(GameObject go in MouseButtonParts) {
 				go.SetActive(!isController);
@@ -164,5 +162,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

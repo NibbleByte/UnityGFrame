@@ -11,16 +11,11 @@ namespace DevLocker.GFrame.UIUtils
 	{
 		private Button m_Button;
 
-		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
-
 		void Awake()
 		{
 			m_Button = GetComponent<Button>();
 
 			m_Button.onClick.AddListener(OnButtonClick);
-
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
 		}
 
 		private void OnDestroy()
@@ -32,7 +27,7 @@ namespace DevLocker.GFrame.UIUtils
 
 		private void OnButtonClick()
 		{
-			m_PlayerContext.StatesStack.PopState();
+			LevelsManager.Instance.GetPlayerContextFor(gameObject)?.StatesStack.PopState();
 		}
 	}
 }

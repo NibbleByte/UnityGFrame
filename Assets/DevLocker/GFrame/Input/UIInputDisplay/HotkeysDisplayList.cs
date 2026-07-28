@@ -1,10 +1,5 @@
-#if USE_INPUT_SYSTEM
-
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace DevLocker.GFrame.Input.UIInputDisplay
 {
@@ -21,11 +16,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		public List<HotkeyDisplayUI> HotkeyObjects;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 		}
 
 		private void OnDisable()
@@ -45,7 +40,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 				if (hotkey == null)
 					continue;
 
-				bool actionEnabled = m_PlayerContext.IsActive && (m_PlayerContext.InputContext?.FindActionFor(hotkey.InputAction)?.enabled ?? false);
+				bool actionEnabled = m_InputUIRoot.IsActive && (m_InputUIRoot.InputContext?.FindActionFor(hotkey.InputAction)?.enabled ?? false);
 				if (actionEnabled != hotkey.gameObject.activeSelf) {
 					hotkey.gameObject.SetActive(actionEnabled);
 					hasChanges = true;
@@ -59,5 +54,3 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		}
 	}
 }
-
-#endif

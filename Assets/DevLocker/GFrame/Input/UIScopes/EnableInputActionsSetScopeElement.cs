@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,7 +13,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		public InputActionsSetDef ActionsSet;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
@@ -27,9 +25,9 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		protected virtual void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -43,7 +41,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			m_PlayerContext.InputContext.Enable(this, GetUsedActions(m_PlayerContext.InputContext));
+			m_InputUIRoot.InputContext.Enable(this, GetUsedActions(m_InputUIRoot.InputContext));
 		}
 
 		void OnDisable()
@@ -51,7 +49,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			m_PlayerContext.InputContext.Disable(this, GetUsedActions(m_PlayerContext.InputContext));
+			m_InputUIRoot.InputContext.Disable(this, GetUsedActions(m_InputUIRoot.InputContext));
 		}
 
 		public IEnumerable<InputAction> GetUsedActions(IInputContext inputContext)
@@ -71,5 +69,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

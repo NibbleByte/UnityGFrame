@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-using DevLocker.GFrame.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +26,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		public List<ControlSchemeActiveObjects> ControlSchemeObjects;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
@@ -67,9 +65,9 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -81,7 +79,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		void OnDestroy()
 		{
 			// Remove references for easier memory profiling and debugging. NOTE: if object was never awaken, this won't get executed.
-			m_PlayerContext = null;
+			m_InputUIRoot = null;
 
 			ControlSchemeObjects.Clear();
 		}
@@ -91,13 +89,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (!m_HasInitialized)
 				return;
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(InputControlSchemeActivatorUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			m_PlayerContext.InputContext.LastUsedInputControlSchemeChanged += OnLastUsedInputControlSchemeChanged;
+			m_InputUIRoot.InputContext.LastUsedInputControlSchemeChanged += OnLastUsedInputControlSchemeChanged;
 
 			if (string.IsNullOrEmpty(m_LastControlScheme)) {
 				foreach (ControlSchemeActiveObjects bind in ControlSchemeObjects) {
@@ -106,7 +104,7 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			}
 
 			m_LastControlScheme = null;
-			RefreshObjects(m_PlayerContext.InputContext);
+			RefreshObjects(m_InputUIRoot.InputContext);
 		}
 
 		void OnDisable()
@@ -114,11 +112,11 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 			if (!m_HasInitialized)
 				return;
 
-			if (m_PlayerContext?.InputContext != null) {
-				m_PlayerContext.InputContext.LastUsedInputControlSchemeChanged -= OnLastUsedInputControlSchemeChanged;
+			if (m_InputUIRoot?.InputContext != null) {
+				m_InputUIRoot.InputContext.LastUsedInputControlSchemeChanged -= OnLastUsedInputControlSchemeChanged;
 			}
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(InputControlSchemeActivatorUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
@@ -133,13 +131,13 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 
 		private void OnLastUsedInputControlSchemeChanged()
 		{
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {nameof(InputControlSchemeActivatorUI)} {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			RefreshObjects(m_PlayerContext.InputContext);
+			RefreshObjects(m_InputUIRoot.InputContext);
 		}
 
 		void OnValidate()
@@ -157,4 +155,3 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 	}
 
 }
-#endif

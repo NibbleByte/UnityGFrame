@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.GFrame
 {
 	/// <summary>
 	/// Contains static shared player references that can be accessed by the <see cref="IPlayerState"/>.

@@ -21,13 +21,8 @@ namespace DevLocker.GFrame.SampleGame.MainMenu
 
 		public StatePanelBinds[] StatePanels;
 
-		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
-
 		void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
-
 			foreach (var bind in StatePanels) {
 				bind.Panel.SetActive(false);
 			}
@@ -53,11 +48,7 @@ namespace DevLocker.GFrame.SampleGame.MainMenu
 
 		public void LoadUITester()
 		{
-#if GFRAME_ASYNC
 			Game.SampleLevelsManager.Instance.SwitchLevelAsync(new UITester.SampleUITesterLevelSupervisor());
-#else
-			Game.SampleLevelsManager.Instance.SwitchLevel(new UITester.SampleUITesterLevelSupervisor());
-#endif
 		}
 
 		public void QuitGame()

@@ -22,7 +22,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 		private Rigidbody m_Rigidbody;
 		private Vector3 m_Velocity;
 
-		private IPlayerContext m_PlayerContext;
+		private PlayerContext m_PlayerContext;
 
 		void Awake()
 		{

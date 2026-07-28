@@ -32,7 +32,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private bool m_HasInitialized = false;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		void Awake()
 		{
@@ -40,17 +40,17 @@ namespace DevLocker.GFrame.Input.UIScope
 				OnSelectedObject = GetComponent<Selectable>();
 			}
 
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 		}
 
 		public void Update()
 		{
-			if (!m_PlayerContext.IsActive)
+			if (!m_InputUIRoot.IsActive)
 				return;
 
-			if (m_LastSelectedObject != m_PlayerContext.SelectedGameObject || !m_HasInitialized) {
+			if (m_LastSelectedObject != m_InputUIRoot.SelectedGameObject || !m_HasInitialized) {
 				m_HasInitialized = true;
-				m_LastSelectedObject = m_PlayerContext.SelectedGameObject;
+				m_LastSelectedObject = m_InputUIRoot.SelectedGameObject;
 
 				if (MultipleObjects) {
 					bool activate;

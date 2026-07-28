@@ -1,7 +1,4 @@
-#if USE_INPUT_SYSTEM
-
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -78,5 +75,3 @@ namespace DevLocker.GFrame.Input.UIScope
 		}
 	}
 }
-
-#endif

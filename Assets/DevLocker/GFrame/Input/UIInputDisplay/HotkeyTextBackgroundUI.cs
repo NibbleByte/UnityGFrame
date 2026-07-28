@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,6 +39,4 @@ namespace DevLocker.GFrame.Input.UIInputDisplay
 		}
 	}
 
-
 }
-#endif

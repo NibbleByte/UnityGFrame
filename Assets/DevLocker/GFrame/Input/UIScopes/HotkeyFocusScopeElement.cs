@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +70,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				}
 
 			} else if (m_PrevScopeWhenPressed == null) {
-				m_PrevScopeWhenPressed = UIScope.FocusedScope(m_PlayerContext.GetRootObject());
+				m_PrevScopeWhenPressed = UIScope.FocusedScope(m_InputUIRoot.GetRootObject());
 				m_TargetScopeWhenPressed = GetTargetScopeToFocus();
 
 				if (m_TargetScopeWhenPressed) {
@@ -102,7 +100,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (FocusWhilePressed && m_PrevScopeWhenPressed) {
 
 				// Cancel was called because of newly focused scope resetting all the actions.
-				if (UIScope.IsCurrentlySwitchingActiveScopes(m_PlayerContext.GetRootObject())) {
+				if (UIScope.IsCurrentlySwitchingActiveScopes(m_InputUIRoot.GetRootObject())) {
 					// Just cancel, the new focus is more important.
 					// NOTE: resetting actions doesn't mean the user released the button. When this is a trigger, while releasing, it will fire new performed event, stealing the focus. :(
 					m_PrevScopeWhenPressed = null;
@@ -133,7 +131,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private void OnScopeFocused(UIScope scope)
 		{
 			// Just cancel, the new focus is more important.
-			if (m_PrevScopeWhenPressed && m_PlayerContext.GetRootObject() == scope.PlayerContext && scope != m_TargetScopeWhenPressed) {
+			if (m_PrevScopeWhenPressed && m_InputUIRoot.GetRootObject() == scope.InputUIRoot && scope != m_TargetScopeWhenPressed) {
 				m_PrevScopeWhenPressed = null;
 				m_TargetScopeWhenPressed = null;
 			}
@@ -160,7 +158,7 @@ namespace DevLocker.GFrame.Input.UIScope
 					break;
 
 				case FocusPolicyType.FocusScopeWithHighestDepth:
-					IReadOnlyCollection<UIScope> registeredScopes = UIScope.GetRegisteredScopes(m_PlayerContext.GetRootObject());
+					IReadOnlyCollection<UIScope> registeredScopes = UIScope.GetRegisteredScopes(m_InputUIRoot.GetRootObject());
 					if (registeredScopes == null)
 						return null;
 
@@ -173,7 +171,7 @@ namespace DevLocker.GFrame.Input.UIScope
 					break;
 
 				case FocusPolicyType.FocusPreviousScope:
-					nextScope = UIScope.FocusedScope(m_PlayerContext.GetRootObject())?.LastFocusedScope;
+					nextScope = UIScope.FocusedScope(m_InputUIRoot.GetRootObject())?.LastFocusedScope;
 
 					if (nextScope == null)
 						break;
@@ -267,5 +265,3 @@ namespace DevLocker.GFrame.Input.UIScope
 	}
 #endif
 }
-
-#endif

@@ -22,12 +22,10 @@ namespace DevLocker.GFrame.SampleGame.Play
 	/// </summary>
 	public class SampleMultiPlaySupervisor : ILevelSupervisor
 	{
+		public IReadOnlyCollection<PlayerContext> PlayerContexts => m_PlayerContexts;
+		private readonly List<PlayerContext> m_PlayerContexts = new List<PlayerContext>();
 
-#if GFRAME_ASYNC
 		public async Task LoadAsync()
-#else
-		public IEnumerator Load()
-#endif
 		{
 			SampleGameContext gameContext = SampleLevelsManager.Instance.GameContext;
 
@@ -43,22 +41,14 @@ namespace DevLocker.GFrame.SampleGame.Play
 			if (SceneManager.GetActiveScene().name != "Sample-MultiPlayScene") {
 				// To bypass build settings list.
 				var sceneParam = new LoadSceneParameters() { loadSceneMode = LoadSceneMode.Single, localPhysicsMode = LocalPhysicsMode.None };
-#if GFRAME_ASYNC
-				var loadOp = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode("Packages/devlocker.gframe/SampleGame/Scenes/Sample-MultiPlayScene.unity", sceneParam);
+				var loadOp = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(SampleLevelsManager.GetEditorSampleScenePath("Sample-MultiPlayScene.unity"), sceneParam);
 				while (!loadOp.isDone) await Task.Yield();
-#else
-				yield return UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode("Packages/devlocker.gframe/SampleGame/Scenes/Sample-MultiPlayScene.unity", sceneParam);
-#endif
 			}
 #else
 			// Can pass it on as a parameter to the supervisor, instead of hard-coding it here.
 			if (SceneManager.GetActiveScene().name != "Sample-PlayScene") {
-#if GFRAME_ASYNC
 				var loadOp = SceneManager.LoadSceneAsync("Sample-MultiPlayScene", LoadSceneMode.Single);
 				while(!loadOp.isDone) await Task.Yield();
-#else
-				yield return SceneManager.LoadSceneAsync("Sample-MultiPlayScene", LoadSceneMode.Single);
-#endif
 			}
 #endif
 
@@ -74,7 +64,6 @@ namespace DevLocker.GFrame.SampleGame.Play
 				var playerController = playerInput.camera.GetComponentInParent<SamplePlayerController>();
 				var uiController = eventSystem.playerRoot.GetComponentInParent<SamplePlayUIController>();
 
-				var playerContext = uiController.GetComponent<PlayerContextUIRootObject>();
 
 				// HACK: trick the PlayerInput to use the reference to our asset instead of copying the actions. Check the InputComponentContext() constructor for more info.
 				// NOTE: the PlayerInput must initially have empty reference set for InputActionAsset in the prefab.
@@ -98,12 +87,15 @@ namespace DevLocker.GFrame.SampleGame.Play
 				//
 				// Now the states stack & UI root...
 				//
-				playerContext.SetupPlayer(eventSystem, inputContext);
+				var playerContext = new PlayerContext();
+				var inputUIRoot = uiController.GetComponent<InputUIRootObject>();
+				inputUIRoot.SetupContext(eventSystem, inputContext);
 
 				playerContext.CreatePlayerStack(
 					playerControls,
 					playerController,
-					uiController
+					uiController,
+					inputUIRoot
 				);
 
 
@@ -111,11 +103,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 				var behaviours = CollectBehaviours(playerController, uiController, eventSystem);
 
 				foreach (var listener in behaviours.OfType<ILevelLoadingListener>()) {
-#if GFRAME_ASYNC
 					await listener.OnLevelLoadingAsync(playerContext.StatesStack.Context);
-#else
-					yield return listener.OnLevelLoading(playerContext.StatesStack.Context);
-#endif
 				}
 
 				foreach (var listener in behaviours.OfType<ILevelLoadedListener>()) {
@@ -124,15 +112,13 @@ namespace DevLocker.GFrame.SampleGame.Play
 
 
 				playerContext.StatesStack.SetState(new SamplePlayJumperState());
+
+				m_PlayerContexts.Add(playerContext);
 			}
 		}
 
 
-#if GFRAME_ASYNC
 		public Task UnloadAsync()
-#else
-		public IEnumerator Unload()
-#endif
 		{
 			// Stop the manager as it will log errors complaining about the global PlayerInput not having camera.
 			GameObject.FindAnyObjectByType<PlayerInputManager>().enabled = false;
@@ -154,11 +140,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 			// Enabling input components causes for UI InputActions to get enabled, which confuses the MainMenu supervisor, who also enables them.
 			SampleLevelsManager.Instance.GameContext.PlayerControls.Sample_UI.Disable();
 
-#if GFRAME_ASYNC
 			return Task.CompletedTask;
-#else
-			yield break;
-#endif
 		}
 
 

@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -375,4 +374,3 @@ namespace DevLocker.GFrame.Input
 		}
 	}
 }
-#endif

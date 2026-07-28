@@ -29,7 +29,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		public float EasingDuration = 0.5f;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		private GameObject m_LastSelectedObject;
 		private Coroutine m_EaseCoroutine;
@@ -46,16 +46,16 @@ namespace DevLocker.GFrame.Input.UIScope
 				ScrollRect = GetComponent<ScrollRect>();
 			}
 
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 		}
 
 		void LateUpdate()
 		{
-			if (!m_PlayerContext.IsActive)
+			if (!m_InputUIRoot.IsActive)
 				return;
 
-			if (m_LastSelectedObject != m_PlayerContext.SelectedGameObject) {
-				m_LastSelectedObject = m_PlayerContext.SelectedGameObject;
+			if (m_LastSelectedObject != m_InputUIRoot.SelectedGameObject) {
+				m_LastSelectedObject = m_InputUIRoot.SelectedGameObject;
 
 				if (m_LastSelectedObject && m_LastSelectedObject.transform.IsChildOf(ScrollRect.transform)) {
 					ScrollToChild(m_LastSelectedObject.GetComponent<RectTransform>(), useEasing: true);

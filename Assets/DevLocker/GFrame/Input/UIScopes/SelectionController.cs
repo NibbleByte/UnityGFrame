@@ -68,7 +68,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private bool m_ControlSchemeMatched = true;
 
 		// Only one should be active per context. It's a list to avoid issues while changing active scopes.
-		private static Dictionary<PlayerContextUIRootObject, List<SelectionController>> s_ActiveInstances = new Dictionary<PlayerContextUIRootObject, List<SelectionController>>();
+		private static Dictionary<InputUIRootObject, List<SelectionController>> s_ActiveInstances = new Dictionary<InputUIRootObject, List<SelectionController>>();
 
 		private List<CanvasGroup> m_CanvasGroups = new List<CanvasGroup>();
 
@@ -76,7 +76,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private GameObject m_SelectedObjectOnEnable;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
@@ -128,7 +128,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		{
 			m_PersistedSelectable = selectable;
 			m_PersistedSelection = selectable != null ? selectable.gameObject : null;
-			m_PlayerContext?.SetSelectedGameObject(m_PersistedSelection);
+			m_InputUIRoot?.SetSelectedGameObject(m_PersistedSelection);
 		}
 
 		public virtual bool IsInStartSelection(Selectable selectable)
@@ -156,9 +156,9 @@ namespace DevLocker.GFrame.Input.UIScope
 		/// <summary>
 		/// Get the active instance for the specified player context (i.e. singleton).
 		/// </summary>
-		public static SelectionController GetActiveInstanceFor(PlayerContextUIRootObject playerContext)
+		public static SelectionController GetActiveInstanceFor(InputUIRootObject inputUIRoot)
 		{
-			s_ActiveInstances.TryGetValue(playerContext, out List<SelectionController> instance);
+			s_ActiveInstances.TryGetValue(inputUIRoot, out List<SelectionController> instance);
 
 			return instance?.FirstOrDefault();
 		}
@@ -175,9 +175,9 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		protected virtual void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				if (delayedSetup && isActiveAndEnabled) {
@@ -198,7 +198,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			m_SelectedObjectOnEnable = null;
 
 			m_CanvasGroups = null;
-			m_PlayerContext = null;
+			m_InputUIRoot = null;
 		}
 
 		protected virtual void OnEnable()
@@ -208,12 +208,12 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			IsSelectRequested = true;
 
-			m_SelectedObjectOnEnable = m_PlayerContext.SelectedGameObject;
+			m_SelectedObjectOnEnable = m_InputUIRoot.SelectedGameObject;
 
-			s_ActiveInstances.TryGetValue(m_PlayerContext.GetRootObject(), out List<SelectionController> activeInstances);
+			s_ActiveInstances.TryGetValue(m_InputUIRoot.GetRootObject(), out List<SelectionController> activeInstances);
 			if (activeInstances == null) {
 				activeInstances = new List<SelectionController>(2);
-				s_ActiveInstances.Add(m_PlayerContext.GetRootObject(), activeInstances);
+				s_ActiveInstances.Add(m_InputUIRoot.GetRootObject(), activeInstances);
 			}
 			activeInstances.Add(this);
 
@@ -225,15 +225,15 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			s_ActiveInstances.TryGetValue(m_PlayerContext.GetRootObject(), out List<SelectionController> activeInstances);
+			s_ActiveInstances.TryGetValue(m_InputUIRoot.GetRootObject(), out List<SelectionController> activeInstances);
 			if (activeInstances != null && activeInstances.Contains(this)) {
 				activeInstances.Remove(this);
 				if (activeInstances.Count == 0) {
-					s_ActiveInstances.Remove(m_PlayerContext.GetRootObject());
+					s_ActiveInstances.Remove(m_InputUIRoot.GetRootObject());
 				}
 			}
 
-			if (ExtraSettings.ClearSelectionOnDisable && m_PlayerContext.IsActive) {
+			if (ExtraSettings.ClearSelectionOnDisable && m_InputUIRoot.IsActive) {
 				TryClearSelection();
 			}
 
@@ -245,26 +245,26 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		void Update()
 		{
-			if (!m_PlayerContext.IsActive || !m_HasInitialized)
+			if (!m_InputUIRoot.IsActive || !m_HasInitialized)
 				return;
 
 			bool removeSelectionIfDeviceDoesntSupportIt = false;
-			if (m_PlayerContext.InputContext != null) {
-				removeSelectionIfDeviceDoesntSupportIt = m_PlayerContext.InputContext.DefaultBehaviours.RemoveSelectionIfDeviceDoesntSupportIt;
+			if (m_InputUIRoot.InputContext != null) {
+				removeSelectionIfDeviceDoesntSupportIt = m_InputUIRoot.InputContext.DefaultBehaviours.RemoveSelectionIfDeviceDoesntSupportIt;
 				removeSelectionIfDeviceDoesntSupportIt = ExtraSettings.RemoveSelectionIfDeviceDoesntSupportIt.FinalValue(removeSelectionIfDeviceDoesntSupportIt);
 
-				m_ControlSchemeMatched = m_PlayerContext.InputContext.DeviceSupportsUINavigationSelection;
-				if (m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse mouse) {
+				m_ControlSchemeMatched = m_InputUIRoot.InputContext.DeviceSupportsUINavigationSelection;
+				if (m_InputUIRoot.InputContext.GetLastUsedInputDevice() is Mouse mouse) {
 
-					var mouseSupport = m_PlayerContext.InputContext.DefaultBehaviours.MouseSupportsUINavigationSelection;
+					var mouseSupport = m_InputUIRoot.InputContext.DefaultBehaviours.MouseSupportsUINavigationSelection;
 					mouseSupport = ExtraSettings.MouseSupportsUINavigationSelection.FinalValue(mouseSupport);
 
 					if (!mouseSupport) {
 
 						// Is dragging some object (for example slider). In that case don't deselect.
 						bool isDragging = mouse.leftButton.isPressed
-							&& m_PlayerContext.SelectedGameObject
-							&& m_PlayerContext.SelectedGameObject.GetComponent<UnityEngine.EventSystems.IDragHandler>() != null
+							&& m_InputUIRoot.SelectedGameObject
+							&& m_InputUIRoot.SelectedGameObject.GetComponent<UnityEngine.EventSystems.IDragHandler>() != null
 							;
 
 						m_ControlSchemeMatched = isDragging;
@@ -274,11 +274,11 @@ namespace DevLocker.GFrame.Input.UIScope
 
 			// Wait till clickable to work with selection.
 			if (!IsClickable()) {
-				if (!m_ControlSchemeMatched && removeSelectionIfDeviceDoesntSupportIt && m_PlayerContext.SelectedGameObject) {
+				if (!m_ControlSchemeMatched && removeSelectionIfDeviceDoesntSupportIt && m_InputUIRoot.SelectedGameObject) {
 					TryClearSelection();
 				}
 
-				if (ExtraSettings.ClearSelectionOnDisable && m_PlayerContext.SelectedGameObject) {
+				if (ExtraSettings.ClearSelectionOnDisable && m_InputUIRoot.SelectedGameObject) {
 					TryClearSelection();
 				}
 
@@ -294,27 +294,25 @@ namespace DevLocker.GFrame.Input.UIScope
 					return;
 
 				// Call this on update, to avoid errors while switching active object (turn on one, turn off another). In the end, only one should be active.
-				s_ActiveInstances.TryGetValue(m_PlayerContext.GetRootObject(), out List<SelectionController> activeInstances);
+				s_ActiveInstances.TryGetValue(m_InputUIRoot.GetRootObject(), out List<SelectionController> activeInstances);
 				if (activeInstances == null || activeInstances.Count != 1 || !activeInstances.Contains(this)) {
 					Debug.LogError($"[Input] There are two or more {nameof(SelectionController)} instances active at the same time - this is not allowed. Currently active: {string.Join(", ", activeInstances?.Select(s => s.name) ?? Array.Empty<string>())}. Selection requested for: \"{name}\"", this);
 				}
 
-#if USE_INPUT_SYSTEM
 				// Hotkeys subscribe for the InputAction.perform event, which executes on key press / down,
 				// while "Submit" action of the InputSystemUIInputModule runs on key release / up.
 				// This makes hotkey being executed, new screen scope shown and executing the newly selected button on release.
 				// We don't want that so wait till submit action is no more pressed.
-				var inputModule = m_PlayerContext.EventSystem.currentInputModule as UnityEngine.InputSystem.UI.InputSystemUIInputModule;
+				var inputModule = m_InputUIRoot.EventSystem.currentInputModule as UnityEngine.InputSystem.UI.InputSystemUIInputModule;
 				var submitAction = inputModule?.submit?.action;
 				if (submitAction != null && submitAction.IsPressed())
 					return;
-#endif
 
 				IsSelectRequested = false;
 
 				// If user changed selection during my select request don't override their choice (unless it's outside the my scope).
-				if (m_SelectedObjectOnEnable != m_PlayerContext.SelectedGameObject && m_PlayerContext.SelectedGameObject && m_PlayerContext.SelectedGameObject.activeInHierarchy)
-					if (!ExtraSettings.TrackOnlyChildren || m_PlayerContext.SelectedGameObject.transform.IsChildOf(transform))
+				if (m_SelectedObjectOnEnable != m_InputUIRoot.SelectedGameObject && m_InputUIRoot.SelectedGameObject && m_InputUIRoot.SelectedGameObject.activeInHierarchy)
+					if (!ExtraSettings.TrackOnlyChildren || m_InputUIRoot.SelectedGameObject.transform.IsChildOf(transform))
 						return;
 
 				GameObject targetSelection = (PersistentSelection > 0 && m_PersistedIsAvailable)
@@ -329,13 +327,13 @@ namespace DevLocker.GFrame.Input.UIScope
 				if (m_ControlSchemeMatched) {
 
 					// If UI was deactivated but selection didn't change, activating it back will leave the button selected but not highlighted.
-					if (m_PlayerContext.SelectedGameObject == targetSelection) {
-						m_PlayerContext.SetSelectedGameObject(null);
+					if (m_InputUIRoot.SelectedGameObject == targetSelection) {
+						m_InputUIRoot.SetSelectedGameObject(null);
 					}
 
-					m_PlayerContext.SetSelectedGameObject(targetSelection);
+					m_InputUIRoot.SetSelectedGameObject(targetSelection);
 
-					m_PersistedSelection = m_PlayerContext.SelectedGameObject;
+					m_PersistedSelection = m_InputUIRoot.SelectedGameObject;
 					m_PersistedSelectable = m_PersistedSelection ? m_PersistedSelection.GetComponent<Selectable>() : null;
 
 					OnSelected();
@@ -349,15 +347,15 @@ namespace DevLocker.GFrame.Input.UIScope
 			} else {
 
 				if (m_ControlSchemeMatched) {
-					GameObject selectedObject = m_PlayerContext.SelectedGameObject;
+					GameObject selectedObject = m_InputUIRoot.SelectedGameObject;
 					Selectable selectable = selectedObject ? selectedObject.GetComponent<Selectable>() : null;
 					if (selectedObject && selectedObject.activeInHierarchy && (selectable == null || selectable.IsInteractable())) {
 
 						if (!ExtraSettings.TrackOnlyChildren
 							|| selectable && IsInStartSelection(selectable)
-							|| m_PlayerContext.SelectedGameObject.transform.IsChildOf(transform)
+							|| m_InputUIRoot.SelectedGameObject.transform.IsChildOf(transform)
 							) {
-							m_PersistedSelection = m_PlayerContext.SelectedGameObject;
+							m_PersistedSelection = m_InputUIRoot.SelectedGameObject;
 							m_PersistedSelectable = m_PersistedSelection ? m_PersistedSelection.GetComponent<Selectable>() : null;
 						}
 
@@ -379,7 +377,7 @@ namespace DevLocker.GFrame.Input.UIScope
 						}
 
 						if (bestSelectable) {
-							m_PlayerContext.SetSelectedGameObject(bestSelectable.gameObject);
+							m_InputUIRoot.SetSelectedGameObject(bestSelectable.gameObject);
 							OnSelected();
 
 						} else {
@@ -389,7 +387,7 @@ namespace DevLocker.GFrame.Input.UIScope
 						DoNoSelectionAction();
 					}
 				} else {
-					if (removeSelectionIfDeviceDoesntSupportIt && m_PlayerContext.SelectedGameObject) {
+					if (removeSelectionIfDeviceDoesntSupportIt && m_InputUIRoot.SelectedGameObject) {
 						TryClearSelection();
 					}
 				}
@@ -398,22 +396,22 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		private void DoNoSelectionAction()
 		{
-			if (m_PlayerContext.InputContext == null)	// Not sure about this.
+			if (m_InputUIRoot.InputContext == null)	// Not sure about this.
 				return;
 
-			if (m_PlayerContext.InputContext.DefaultBehaviours.AllowEmptyClicksToDeselect
-				&& m_PlayerContext.InputContext.GetLastUsedInputDevice() is Mouse) {
+			if (m_InputUIRoot.InputContext.DefaultBehaviours.AllowEmptyClicksToDeselect
+				&& m_InputUIRoot.InputContext.GetLastUsedInputDevice() is Mouse) {
 				// Do nothing.
 			} else {
 				GameObject startObject = GetStartSelection()?.gameObject; // Null-check is safe.
-				m_PlayerContext.SetSelectedGameObject(m_PersistedIsAvailable ? m_PersistedSelection : startObject);
+				m_InputUIRoot.SetSelectedGameObject(m_PersistedIsAvailable ? m_PersistedSelection : startObject);
 			}
 		}
 
 		private void TryClearSelection()
 		{
-			if (!m_PlayerContext.IsTextFieldFocused()) {
-				m_PlayerContext.SetSelectedGameObject(null);
+			if (!m_InputUIRoot.IsTextFieldFocused()) {
+				m_InputUIRoot.SetSelectedGameObject(null);
 			}
 		}
 

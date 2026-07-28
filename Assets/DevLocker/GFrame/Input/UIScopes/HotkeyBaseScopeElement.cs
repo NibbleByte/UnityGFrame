@@ -1,5 +1,3 @@
-#if USE_INPUT_SYSTEM
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -34,7 +32,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private Coroutine m_CancelCheckAfterPeformCrt;
 
 		// Used for multiple event systems (e.g. split screen).
-		protected IPlayerContext m_PlayerContext;
+		protected IInputUIRoot m_InputUIRoot;
 
 		protected bool m_HasInitialized = false;
 
@@ -46,9 +44,9 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		protected virtual void Awake()
 		{
-			m_PlayerContext = PlayerContextUtils.GetPlayerContextFor(gameObject);
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
 
-			m_PlayerContext.AddSetupCallback((delayedSetup) => {
+			m_InputUIRoot.AddSetupCallback((delayedSetup) => {
 				m_HasInitialized = true;
 
 				OnContextReady();
@@ -74,18 +72,18 @@ namespace DevLocker.GFrame.Input.UIScope
 			if (!m_HasInitialized)
 				return;
 
-			if (m_PlayerContext.InputContext == null) {
+			if (m_InputUIRoot.InputContext == null) {
 				Debug.LogWarning($"[Input] {GetType().Name} button {name} can't be used if Unity Input System is not provided.", this);
 				enabled = false;
 				return;
 			}
 
-			foreach(InputAction action in GetUsedActions(m_PlayerContext.InputContext)) {
+			foreach(InputAction action in GetUsedActions(m_InputUIRoot.InputContext)) {
 				action.started += OnInputStarted;
 				action.performed += OnInputPerformed;
 				action.canceled += OnInputCancel;
 
-				m_PlayerContext.InputContext.Enable(this, action);
+				m_InputUIRoot.InputContext.Enable(this, action);
 			}
 		}
 
@@ -101,17 +99,17 @@ namespace DevLocker.GFrame.Input.UIScope
 			m_ActionStarted = false;
 			m_ActionPerformed = false;
 
-			foreach (InputAction action in m_PlayerContext.InputContext.GetInputActionsEnabledBy(this).ToList()) {
+			foreach (InputAction action in m_InputUIRoot.InputContext.GetInputActionsEnabledBy(this).ToList()) {
 				action.started -= OnInputStarted;
 				action.performed -= OnInputPerformed;
 				action.canceled -= OnInputCancel;
-				m_PlayerContext.InputContext.Disable(this, action);
+				m_InputUIRoot.InputContext.Disable(this, action);
 			}
 		}
 
 		private void OnInputStarted(InputAction.CallbackContext context)
 		{
-			if (PlayerContextUtils.ShouldSkipHotkey(m_PlayerContext, SkipHotkey))
+			if (InputContextUtils.ShouldSkipHotkey(m_InputUIRoot, SkipHotkey))
 				return;
 
 			if (!Utils.UIUtils.IsClickable(gameObject))
@@ -124,7 +122,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 		private void OnInputPerformed(InputAction.CallbackContext context)
 		{
-			if (PlayerContextUtils.ShouldSkipHotkey(m_PlayerContext, SkipHotkey))
+			if (InputContextUtils.ShouldSkipHotkey(m_InputUIRoot, SkipHotkey))
 				return;
 
 			if (!Utils.UIUtils.IsClickable(gameObject))
@@ -152,7 +150,7 @@ namespace DevLocker.GFrame.Input.UIScope
 				m_CancelCheckAfterPeformCrt = null;
 			}
 
-			if (PlayerContextUtils.ShouldSkipHotkey(m_PlayerContext, SkipHotkey))
+			if (InputContextUtils.ShouldSkipHotkey(m_InputUIRoot, SkipHotkey))
 				return;
 
 			if (!Utils.UIUtils.IsClickable(gameObject))
@@ -175,10 +173,10 @@ namespace DevLocker.GFrame.Input.UIScope
 		{
 			yield return new WaitForEndOfFrame();
 
-			if (!m_PlayerContext.IsActive)
+			if (!m_InputUIRoot.IsActive)
 				yield break;
 
-			InputAction action = m_PlayerContext.InputContext.FindActionFor(m_InputAction);
+			InputAction action = m_InputUIRoot.InputContext.FindActionFor(m_InputAction);
 			if (action.phase != InputActionPhase.Performed) {
 				// Context is the same in all the events - it keeps reference to the state. I think.
 				OnInputCancel(context);
@@ -333,5 +331,3 @@ namespace DevLocker.GFrame.Input.UIScope
 #endif
 
 }
-
-#endif

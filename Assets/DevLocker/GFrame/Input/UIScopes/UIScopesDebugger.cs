@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 #if UNITY_EDITOR
 using System;
 using UnityEngine;
@@ -154,7 +153,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 				if (GUILayout.Button(SelectionControllerButtonContent, EditorStyles.label, GUILayout.Width(16), GUILayout.Height(EditorGUIUtility.singleLineHeight))) {
 					if (Application.isPlaying) {
-						Selection.activeObject = SelectionController.GetActiveInstanceFor(PlayerContextUIRootObject.GlobalPlayerContext);
+						Selection.activeObject = SelectionController.GetActiveInstanceFor(InputUIRootObject.GlobalUIRoot);
 					} else {
 #if UNITY_2023_2_OR_NEWER
 						Selection.activeObject = GameObject.FindAnyObjectByType<SelectionController>(FindObjectsInactive.Include);
@@ -170,7 +169,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			EditorGUILayout.BeginHorizontal();
 			{
 				UIScope focusedScope = Application.isPlaying
-					? UIScope.FocusedScope(PlayerContextUIRootObject.GlobalPlayerContext)
+					? UIScope.FocusedScope(InputUIRootObject.GlobalUIRoot)
 					: null
 					;
 
@@ -243,7 +242,7 @@ namespace DevLocker.GFrame.Input.UIScope
 			GUILayout.EndScrollView();
 
 			// Do only on repaint or exceptions happen.
-			if (Application.isPlaying && Event.current != null && Event.current.type == EventType.Repaint && !m_FocusedScopeWasDrawn && UIScope.FocusedScope(PlayerContextUIRootObject.GlobalPlayerContext)) {
+			if (Application.isPlaying && Event.current != null && Event.current.type == EventType.Repaint && !m_FocusedScopeWasDrawn && UIScope.FocusedScope(InputUIRootObject.GlobalUIRoot)) {
 				m_RootElement = null;
 				GUIUtility.ExitGUI();
 			}
@@ -294,7 +293,7 @@ namespace DevLocker.GFrame.Input.UIScope
 					int depth = child.Depth;
 					bool scopeIsEnabled = scope && scope.isActiveAndEnabled;
 
-					if (Application.isPlaying && scope == UIScope.FocusedScope(PlayerContextUIRootObject.GlobalPlayerContext)) {
+					if (Application.isPlaying && scope == UIScope.FocusedScope(InputUIRootObject.GlobalUIRoot)) {
 						m_FocusedScopeWasDrawn = true;
 					}
 
@@ -345,7 +344,7 @@ namespace DevLocker.GFrame.Input.UIScope
 
 						if (Application.isPlaying) {
 							scopeElements = scope.OwnedElements.ToList();
-							context = scope.PlayerContext?.InputContext;
+							context = scope.InputUIRoot?.InputContext;
 						} else {
 							var directChildScopes = new List<UIScope>();
 							UIScope.ScanForOwnedScopeElements(scope, scope.transform, scopeElements, directChildScopes);
@@ -476,5 +475,4 @@ namespace DevLocker.GFrame.Input.UIScope
 	}
 }
 
-#endif
 #endif

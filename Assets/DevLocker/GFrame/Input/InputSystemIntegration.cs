@@ -1,4 +1,3 @@
-#if USE_INPUT_SYSTEM
 using DevLocker.GFrame.Input.Contexts;
 using System;
 using System.Collections;
@@ -118,35 +117,23 @@ namespace DevLocker.GFrame.Input
 	}
 
 	/// <summary>
-	/// Manages player context and input. This also should be a MonoBehavior marking the UI hierarchy used by the specific player (use <see cref="PlayerContextUtils.GetPlayerContextFor"/>.
-	/// For more info check <see cref="PlayerContextUIRootObject"/> and <see cref="PlayerContextUIRootForwarder"/>.
-	/// Remember, you have a Global player root as well - <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/>
+	/// Input context for given player (specially for split-screen).
+	/// This should also be a MonoBehavior marking the UI hierarchy used by the same player (use <see cref="InputContextUtils.GetInputUIRootFor"/>).
+	/// For more info check <see cref="InputUIRootObject"/> and <see cref="InputUIRootForwarder"/>.
+	/// Remember, you have a Global player root as well - <see cref="InputUIRootObject.GlobalUIRoot"/>
 	/// </summary>
-	public interface IPlayerContext
+	public interface IInputUIRoot
 	{
 		/// <summary>
-		/// Is the player setup ready.
+		/// Is the context setup ready.
 		/// </summary>
 		bool IsActive { get; }
-
-		/// <summary>
-		/// Name of the player.
-		/// </summary>
-		string PlayerName { get; }
 
 		/// <summary>
 		/// The input context for this player. The heart of this framework.
 		/// Includes the InputStack that should be used everywhere.
 		/// </summary>
 		IInputContext InputContext { get; }
-
-		/// <summary>
-		/// Stack of player states. States can be pushed in / replaced / popped out of the stack.
-		/// This is optional, you can go without one for simple games.
-		///
-		/// NOTE: Context is automatically disposed of on switching level supervisors.
-		/// </summary>
-		PlayerStateStack StatesStack { get; }
 
 		/// <summary>
 		/// Event system used by this player.
@@ -166,11 +153,11 @@ namespace DevLocker.GFrame.Input
 		/// <summary>
 		/// Get the top-most root object.
 		/// </summary>
-		PlayerContextUIRootObject GetRootObject();
+		InputUIRootObject GetRootObject();
 
 
 		/// <summary>
-		/// Called when setup (<see cref="PlayerContextUIRootObject.SetupGlobal"/> or <see cref="PlayerContextUIRootObject.SetupPlayer"/>) happens or immediately if setup was already done.
+		/// Called when setup (<see cref="InputUIRootObject.SetupGlobal"/> or <see cref="InputUIRootObject.SetupContext"/>) happens or immediately if setup was already done.
 		/// Use this to delay your initialization if you need the InputContext on Awake() or OnEnable(), but it is not yet available.
 		/// Once called after setup, the callback is lost - won't be called again so no need to unsubscribe.
 		/// </summary>
@@ -429,23 +416,23 @@ namespace DevLocker.GFrame.Input
 		NonTextSelectableFocused = 1 << 1,
 	}
 
-	public class PlayerContextUtils
+	public class InputContextUtils
 	{
 		/// <summary>
-		/// Get the owning player context root. If no owner found, <see cref="PlayerContextUIRootObject.GlobalPlayerContext"/> is returned.
+		/// Get the owning player context root. If no owner found, <see cref="InputUIRootObject.GlobalUIRoot"/> is returned.
 		/// </summary>
 		/// <param name="go">target object needing player context</param>
-		public static IPlayerContext GetPlayerContextFor(GameObject go)
+		public static IInputUIRoot GetInputUIRootFor(GameObject go)
 		{
-			var rootObject = go.transform.GetComponentInParent<IPlayerContext>(true);
+			var rootObject = go.transform.GetComponentInParent<IInputUIRoot>(true);
 			if (rootObject != null) {
 				return rootObject;
 			}
 
-			return PlayerContextUIRootObject.GlobalPlayerContext;
+			return InputUIRootObject.GlobalUIRoot;
 		}
 
-		public static bool ShouldSkipHotkey(IPlayerContext context, SkipHotkeyOption option)
+		public static bool ShouldSkipHotkey(IInputUIRoot context, SkipHotkeyOption option)
 		{
 			if (context == null)
 				return true;
@@ -471,7 +458,7 @@ namespace DevLocker.GFrame.Input
 		/// <summary>
 		/// Checks if currently selected object by this player is text field that is focused.
 		/// </summary>
-		public static bool IsTextFieldFocused(this IPlayerContext context)
+		public static bool IsTextFieldFocused(this IInputUIRoot context)
 		{
 			GameObject currentSelection = context.SelectedGameObject;
 			if (currentSelection == null)
@@ -756,4 +743,3 @@ namespace DevLocker.GFrame.Input
 		#endregion
 	}
 }
-#endif
