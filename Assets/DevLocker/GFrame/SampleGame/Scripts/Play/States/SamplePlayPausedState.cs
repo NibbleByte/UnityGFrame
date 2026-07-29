@@ -1,5 +1,5 @@
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.SampleGame.Game;
+using DevLocker.WiseInput;
+using DevLocker.WiseInput.Sample;
 
 namespace DevLocker.GFrame.SampleGame.Play
 {

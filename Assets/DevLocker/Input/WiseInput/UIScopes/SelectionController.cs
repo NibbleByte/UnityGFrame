@@ -1,13 +1,13 @@
 using System;
-using DevLocker.GFrame.Input.Contexts;
-using DevLocker.GFrame.Utils;
+using DevLocker.WiseInput.Contexts;
+using DevLocker.WiseInput.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// When this component is enabled, it will set this object as selected in the Unity event system.

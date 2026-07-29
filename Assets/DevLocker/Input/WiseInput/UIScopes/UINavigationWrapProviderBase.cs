@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Base class for <see cref="UINavigationGroup"/> wrap providers.

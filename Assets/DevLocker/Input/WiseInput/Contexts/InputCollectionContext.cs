@@ -6,7 +6,7 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.Utilities;
 
-namespace DevLocker.GFrame.Input.Contexts
+namespace DevLocker.WiseInput.Contexts
 {
 
 	/// <summary>

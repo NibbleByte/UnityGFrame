@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Displays controller cursor in the center of the view port, when controller device used.

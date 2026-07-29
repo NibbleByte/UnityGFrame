@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Forces scroll view to follow selection.

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.WiseInput
 {
 	/// <summary>
 	/// Keeps track of the input actions state (enable flag).

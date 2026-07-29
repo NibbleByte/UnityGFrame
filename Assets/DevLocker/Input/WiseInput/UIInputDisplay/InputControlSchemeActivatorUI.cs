@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// Activates objects when specified control scheme is active, deactivates the rest.

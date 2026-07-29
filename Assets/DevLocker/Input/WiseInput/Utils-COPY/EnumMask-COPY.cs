@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Utils
+namespace DevLocker.WiseInput.Utils
 {
 	/// <summary>
 	/// Display enum as a bit mask drop-down menu in the editor.

@@ -9,6 +9,6 @@ ScriptedImporter:
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 8404be70184654265930450def6a9037, type: 3}
   generateWrapperCode: 0
-  wrapperCodePath: C:/Workspace/Unity/TetrisTower/Packages/DevLocker.GFrame/SampleGame/Scripts/Game/SamplePlayerControls.cs
+  wrapperCodePath: Assets/DevLocker/Input/WiseInput/SampleScene/Scripts/SamplePlayerControls.cs
   wrapperClassName: 
-  wrapperCodeNamespace: DevLocker.GFrame.SampleGame.Game
+  wrapperCodeNamespace: DevLocker.WiseInput.Sample

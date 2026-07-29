@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace DevLocker.GFrame.SampleGame.UITester
+namespace DevLocker.WiseInput.Sample
 {
 	/// <summary>
 	/// Display log entries on screen, temporarily.

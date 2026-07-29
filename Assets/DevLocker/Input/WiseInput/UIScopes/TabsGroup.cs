@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Simple class for making tabbed UI + hotkeys.

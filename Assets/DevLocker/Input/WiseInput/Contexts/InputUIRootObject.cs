@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace DevLocker.GFrame.Input.Contexts
+namespace DevLocker.WiseInput.Contexts
 {
 	/// <summary>
 	/// When using multiple event systems (e.g. split-screen) add this component to the root UI canvas object of each player.

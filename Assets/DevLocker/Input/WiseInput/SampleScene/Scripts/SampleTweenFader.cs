@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace DevLocker.GFrame.SampleGame.UITester
+namespace DevLocker.WiseInput.Sample
 {
 	/// <summary>
 	/// Example tween "system" that fades in canvas group on enable.

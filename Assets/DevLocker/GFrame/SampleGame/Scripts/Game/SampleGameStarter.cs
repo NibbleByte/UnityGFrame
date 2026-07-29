@@ -1,13 +1,14 @@
 using DevLocker.GFrame.MessageBox;
-using DevLocker.GFrame.Input.UIInputDisplay;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.EventSystems;
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.Input.Contexts;
 using System.Linq;
+using DevLocker.WiseInput;
+using DevLocker.WiseInput.UIInputDisplay;
+using DevLocker.WiseInput.Contexts;
+using DevLocker.WiseInput.Sample;
 
 namespace DevLocker.GFrame.SampleGame.Game
 {
@@ -92,11 +93,6 @@ namespace DevLocker.GFrame.SampleGame.Game
 
 			if (GameObject.FindAnyObjectByType<MainMenu.SampleMainMenuController>()) {
 				SampleLevelsManager.Instance.SwitchLevelAsync(new MainMenu.SampleMainMenuLevelSupervisor());
-				return;
-			}
-
-			if (GameObject.FindAnyObjectByType<UITester.SampleUITesterController>()) {
-				SampleLevelsManager.Instance.SwitchLevelAsync(new UITester.SampleUITesterLevelSupervisor());
 				return;
 			}
 		}

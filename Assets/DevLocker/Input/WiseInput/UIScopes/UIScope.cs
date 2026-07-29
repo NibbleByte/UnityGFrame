@@ -1,4 +1,4 @@
-using DevLocker.GFrame.Input.Contexts;
+using DevLocker.WiseInput.Contexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using UnityEditor;
 #endif
 
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Marks scope elements to be controlled by the UIScope.

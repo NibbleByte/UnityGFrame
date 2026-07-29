@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Activates target game object on specified InputAction. When released, deactivates the target objects.

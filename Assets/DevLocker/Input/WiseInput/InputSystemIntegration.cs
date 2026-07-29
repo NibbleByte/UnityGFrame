@@ -1,4 +1,4 @@
-using DevLocker.GFrame.Input.Contexts;
+using DevLocker.WiseInput.Contexts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.WiseInput
 {
 
 	/// <summary>

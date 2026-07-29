@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Utils
+namespace DevLocker.WiseInput.Utils
 {
 	/// <summary>
 	/// UI helper functions.

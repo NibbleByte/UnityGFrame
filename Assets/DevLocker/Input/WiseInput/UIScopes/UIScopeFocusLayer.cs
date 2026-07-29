@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Defines focus layer for scopes to group by.
 	/// Scopes activation is limited to the same focus layer.
 	/// </summary>
-	[CreateAssetMenu(fileName = "Unknown_UIScopeFocusLayer", menuName = "GFrame/UI Scope Focus Layer", order = 1014)]
+	[CreateAssetMenu(fileName = "Unknown_UIScopeFocusLayer", menuName = "WiseInput/UI Scope Focus Layer", order = 1014)]
 	public class UIScopeFocusLayer : ScriptableObject, IComparable, IComparable<UIScopeFocusLayer>
 	{
 		public enum InputBehaviourType

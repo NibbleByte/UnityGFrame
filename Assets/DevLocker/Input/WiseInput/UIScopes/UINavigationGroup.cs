@@ -4,14 +4,14 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using System;
-using DevLocker.GFrame.Utils;
+using DevLocker.WiseInput.Utils;
 using UnityEngine.EventSystems;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Isolates all child selectables into a separate navigation group (can't navigate out from it, unless specified to).

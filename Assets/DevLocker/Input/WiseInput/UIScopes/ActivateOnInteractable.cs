@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// When the <see cref="Selectable"/>s are interactable, activate/deactivate the target game object.

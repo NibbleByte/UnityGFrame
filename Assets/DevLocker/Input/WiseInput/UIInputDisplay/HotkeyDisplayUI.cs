@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// Displays hotkey icon / text.

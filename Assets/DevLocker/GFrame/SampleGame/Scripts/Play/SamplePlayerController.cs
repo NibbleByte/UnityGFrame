@@ -1,6 +1,4 @@
-using DevLocker.GFrame.Input;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace DevLocker.GFrame.SampleGame.Play
 {

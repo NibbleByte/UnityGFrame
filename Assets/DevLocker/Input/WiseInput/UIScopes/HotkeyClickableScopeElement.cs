@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Put next to or under a <see cref="Button"/> or <see cref="Toggle"/> or any <see cref="Selectable"/> component to get invoked on specified InputAction.

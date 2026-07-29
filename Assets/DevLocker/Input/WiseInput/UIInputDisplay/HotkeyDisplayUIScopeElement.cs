@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// Displays hotkey icon / text.

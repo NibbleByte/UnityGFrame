@@ -8,14 +8,14 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.WiseInput
 {
 	/// <summary>
 	/// Definition for set of InputActions grouped by some criteria (similar to the <see cref="InputActionMap"/> but can be referenced).
 	/// Can be used to enable/disable them all together.
 	/// If you specify input asset & map, the set will dynamically be populated with those actions instead.
 	/// </summary>
-	[CreateAssetMenu(fileName = "InputActionsSetDef", menuName = "GFrame/Input Actions Set Def", order = 1015)]
+	[CreateAssetMenu(fileName = "InputActionsSetDef", menuName = "WiseInput/Input Actions Set Def", order = 1015)]
 	public class InputActionsSetDef : ScriptableObject
 	{
 		public InputActionMapPicker ActionsMap;

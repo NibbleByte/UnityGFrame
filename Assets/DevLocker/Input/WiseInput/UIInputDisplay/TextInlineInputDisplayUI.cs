@@ -12,7 +12,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// Attach this component next to <see cref="TextMeshProUGUI"/> and it will replace and update any displayed InputActions in the text.

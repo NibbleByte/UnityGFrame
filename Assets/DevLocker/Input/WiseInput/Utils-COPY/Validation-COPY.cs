@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DevLocker.GFrame.Utils
+namespace DevLocker.WiseInput.Utils
 {
 	/// <summary>
 	/// Validation routines.

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// Exposes API to rebind an InputAction.

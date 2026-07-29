@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.SampleGame.UITester
+namespace DevLocker.WiseInput.Sample
 {
 	/// <summary>
 	/// Logs the message when the button gets pressed.

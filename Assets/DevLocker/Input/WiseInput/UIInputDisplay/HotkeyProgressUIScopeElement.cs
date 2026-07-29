@@ -1,4 +1,4 @@
-using DevLocker.GFrame.Input.UIScope;
+using DevLocker.WiseInput.UIScope;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// Will display progress of Hotkey interaction (e.g. hold / long press etc.)

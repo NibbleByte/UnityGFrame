@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.WiseInput
 {
 	/// <summary>
 	/// Adds options to select InputControlScheme string from the assets in the project.

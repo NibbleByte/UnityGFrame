@@ -8,7 +8,7 @@ using System.Collections;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// Base class for hotkey scope elements (that use Unity's Input System).

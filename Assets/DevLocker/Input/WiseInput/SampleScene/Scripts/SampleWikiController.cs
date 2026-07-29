@@ -1,18 +1,15 @@
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.Input.UIScope;
-using System;
+using DevLocker.WiseInput.UIScope;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.SampleGame.UITester
+namespace DevLocker.WiseInput.Sample
 {
 	/// <summary>
 	/// Generates some wiki entries.
 	/// </summary>
-	public class SampleUITesterWikiController : MonoBehaviour, ILevelLoadedListener
+	public class SampleUITesterWikiController : MonoBehaviour
 	{
 		public Button WikiEntryTab;
 		public GameObject WikiEntryContent;
@@ -22,20 +19,12 @@ namespace DevLocker.GFrame.SampleGame.UITester
 
 		public int WikiEntriesCount = 10;
 
-		// Used for multiple event systems (e.g. split screen).
 		protected IInputUIRoot m_InputUIRoot;
-
-		public void OnLevelLoaded(PlayerStatesContext context)
-		{
-			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
-		}
-
-		public void OnLevelUnloading()
-		{
-		}
 
 		public void Start()
 		{
+			m_InputUIRoot = InputContextUtils.GetInputUIRootFor(gameObject);
+
 			List<Button> tabs = new List<Button>();
 			List<GameObject> contents = new List<GameObject>();
 

@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.WiseInput
 {
 	/// <summary>
 	/// Adds options to select <see cref="InputActionMap"/> from specified input asset.

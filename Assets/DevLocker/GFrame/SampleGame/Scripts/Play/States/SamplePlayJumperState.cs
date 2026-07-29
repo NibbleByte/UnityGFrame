@@ -1,6 +1,5 @@
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.SampleGame.Game;
-using UnityEngine;
+using DevLocker.WiseInput;
+using DevLocker.WiseInput.Sample;
 using UnityEngine.InputSystem;
 
 namespace DevLocker.GFrame.SampleGame.Play

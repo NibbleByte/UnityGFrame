@@ -9,11 +9,11 @@ using System.Linq;
 using System.Text;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using DevLocker.GFrame.Input.Contexts;
-using DevLocker.GFrame.Input.UIInputDisplay;
+using DevLocker.WiseInput.Contexts;
+using DevLocker.WiseInput.UIInputDisplay;
 using UnityEngine.UI;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	internal class UIScopesDebugger : EditorWindow
 	{
@@ -42,7 +42,7 @@ namespace DevLocker.GFrame.Input.UIScope
 		private ForceInputDevice m_ForceInputDevice;
 		private InputBindingDisplayAsset m_ForcedDisplayAsset;
 
-		[MenuItem("Tools/GFrame/UIScopes Debugger")]
+		[MenuItem("Tools/WiseInput/UIScopes Debugger")]
 		internal static void Init()
 		{
 			var window = GetWindow<UIScopesDebugger>(false, "UIScopes Debugger");

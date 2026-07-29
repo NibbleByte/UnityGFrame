@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-namespace DevLocker.GFrame.Input
+namespace DevLocker.WiseInput
 {
 	/// <summary>
 	/// Displays both input action and binding.

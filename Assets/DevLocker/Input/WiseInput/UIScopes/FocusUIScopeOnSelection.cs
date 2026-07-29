@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DevLocker.GFrame.Input.UIScope
+namespace DevLocker.WiseInput.UIScope
 {
 	/// <summary>
 	/// When UI selectable is selected under this component target UIScope is forced to be focused.

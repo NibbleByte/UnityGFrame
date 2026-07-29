@@ -5,12 +5,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
 
-namespace DevLocker.GFrame.Input.UIInputDisplay
+namespace DevLocker.WiseInput.UIInputDisplay
 {
 	/// <summary>
 	/// ScriptableObject containing the required assets to display hotkeys in the UI for specific device.
 	/// </summary>
-	[CreateAssetMenu(fileName = "InputBindingDisplayAsset", menuName = "GFrame/Input Bindings Display Asset", order = 1010)]
+	[CreateAssetMenu(fileName = "InputBindingDisplayAsset", menuName = "WiseInput/Input Bindings Display Asset", order = 1010)]
 	public class InputBindingDisplayAsset : ScriptableObject, IInputBindingDisplayDataProvider
 	{
 		[Serializable]

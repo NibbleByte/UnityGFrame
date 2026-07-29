@@ -1,9 +1,9 @@
-using DevLocker.GFrame.Input.UIInputDisplay;
+using DevLocker.WiseInput.UIInputDisplay;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace DevLocker.GFrame.Input.Contexts
+namespace DevLocker.WiseInput.Contexts
 {
 	/// <summary>
 	/// Add this next to <see cref="InputUIRootObject"/> to force selected device to be used.

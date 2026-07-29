@@ -1,6 +1,6 @@
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.Input.Contexts;
 using DevLocker.GFrame.SampleGame.Game;
+using DevLocker.WiseInput;
+using DevLocker.WiseInput.Contexts;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
