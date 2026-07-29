@@ -42,7 +42,7 @@ namespace DevLocker.WiseInput.UIScope
 		private ForceInputDevice m_ForceInputDevice;
 		private InputBindingDisplayAsset m_ForcedDisplayAsset;
 
-		[MenuItem("Tools/WiseInput/UIScopes Debugger")]
+		[MenuItem("Window/Analysis/WiseInput UIScopes Debugger", false, 2105)]
 		internal static void Init()
 		{
 			var window = GetWindow<UIScopesDebugger>(false, "UIScopes Debugger");
