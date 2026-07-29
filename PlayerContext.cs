@@ -1,5 +1,5 @@
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.Input.Contexts;
+using DevLocker.WiseInput;
+using DevLocker.WiseInput.Contexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

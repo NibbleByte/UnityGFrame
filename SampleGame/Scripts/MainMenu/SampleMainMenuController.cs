@@ -1,6 +1,4 @@
-using DevLocker.GFrame.Input;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace DevLocker.GFrame.SampleGame.MainMenu
@@ -44,11 +42,6 @@ namespace DevLocker.GFrame.SampleGame.MainMenu
 
 			var nextPanel = GetPanel(state);
 			nextPanel.SetActive(true);
-		}
-
-		public void LoadUITester()
-		{
-			Game.SampleLevelsManager.Instance.SwitchLevelAsync(new UITester.SampleUITesterLevelSupervisor());
 		}
 
 		public void QuitGame()

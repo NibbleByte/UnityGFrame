@@ -1,8 +1,7 @@
-using DevLocker.GFrame.Input;
-using DevLocker.GFrame.Input.Contexts;
 using DevLocker.GFrame.SampleGame.Game;
+using DevLocker.WiseInput;
+using DevLocker.WiseInput.Contexts;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,7 +57,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 			// Setup all the context and stacks for each player.
 
 			foreach(MultiplayerEventSystem eventSystem in eventSystems) {
-				var playerControls = new SamplePlayerControls();
+				var playerControls = new WiseInput.Sample.SamplePlayerControls();
 
 				var playerInput = eventSystem.GetComponent<PlayerInput>();
 				var playerController = playerInput.camera.GetComponentInParent<SamplePlayerController>();
