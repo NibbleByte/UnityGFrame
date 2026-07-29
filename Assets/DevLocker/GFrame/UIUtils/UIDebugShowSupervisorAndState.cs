@@ -29,7 +29,7 @@ namespace DevLocker.GFrame.UIUtils
 
 		void Update()
 		{
-			if (LevelsManager.Instance.LevelSupervisor == null)
+			if (LevelsManager.Instance.LevelSupervisor == null || LevelsManager.Instance.IsChangingLevel)
 				return;
 
 			if (m_PlayerContext == null) {

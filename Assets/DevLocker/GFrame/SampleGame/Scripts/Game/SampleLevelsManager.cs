@@ -25,6 +25,10 @@ namespace DevLocker.GFrame.SampleGame.Game
 			if (UnityEditor.AssetDatabase.AssetPathExists(path))
 				return path;
 
+			path = "Assets/DevLocker/Input/WiseInput/SampleScene/" + sampleSceneNameWithExtension;
+			if (UnityEditor.AssetDatabase.AssetPathExists(path))
+				return path;
+
 			if (UnityEditor.AssetDatabase.AssetPathExists(path))
 				return path;
 
