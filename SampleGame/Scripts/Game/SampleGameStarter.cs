@@ -8,7 +8,6 @@ using System.Linq;
 using DevLocker.WiseInput;
 using DevLocker.WiseInput.UIInputDisplay;
 using DevLocker.WiseInput.Contexts;
-using DevLocker.WiseInput.Sample;
 
 namespace DevLocker.GFrame.SampleGame.Game
 {
@@ -45,7 +44,7 @@ namespace DevLocker.GFrame.SampleGame.Game
 			m_Instance = this;
 			DontDestroyOnLoad(gameObject);
 
-			var playerControls = new SamplePlayerControls();
+			var playerControls = new SampleGamePlayerControls();
 
 			var gameInputObject = Instantiate(GameInputPrefab, transform);
 			var levelFader = Instantiate(LevelFader.gameObject, transform).GetComponent<UIUtils.UISimpleCanvasGroupFader_LoadingScreen>();

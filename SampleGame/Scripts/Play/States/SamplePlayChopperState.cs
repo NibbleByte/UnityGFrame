@@ -1,5 +1,5 @@
+using DevLocker.GFrame.SampleGame.Game;
 using DevLocker.WiseInput;
-using DevLocker.WiseInput.Sample;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,9 +9,9 @@ namespace DevLocker.GFrame.SampleGame.Play
 	/// Player is in chopper state - can move freely in all directions with gravity turned off.
 	/// This state also controls what is displayed on the UI via the UIController.
 	/// </summary>
-	public class SamplePlayChopperState : IPlayerState, SamplePlayerControls.ISample_PlayChopperActions
+	public class SamplePlayChopperState : IPlayerState, SampleGamePlayerControls.ISample_PlayChopperActions
 	{
-		private SamplePlayerControls m_PlayerControls;
+		private SampleGamePlayerControls m_PlayerControls;
 		private SamplePlayerController m_PlayerController;
 		private SamplePlayUIController m_UIController;
 

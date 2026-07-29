@@ -1,5 +1,5 @@
+using DevLocker.GFrame.SampleGame.Game;
 using DevLocker.WiseInput;
-using DevLocker.WiseInput.Sample;
 
 namespace DevLocker.GFrame.SampleGame.Play
 {
@@ -8,7 +8,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 	/// </summary>
 	public class SamplePlayOptionsState : IPlayerState
 	{
-		private SamplePlayerControls m_PlayerControls;
+		private SampleGamePlayerControls m_PlayerControls;
 		private SamplePlayUIController m_UIController;
 
 		public void EnterState(PlayerStatesContext context)
