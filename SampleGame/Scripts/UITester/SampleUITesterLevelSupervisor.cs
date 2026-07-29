@@ -29,7 +29,7 @@ namespace DevLocker.GFrame.SampleGame.UITester
 			if (SceneManager.GetActiveScene().name != "Sample-UITestScene") {
 				// To bypass build settings list.
 				var sceneParam = new LoadSceneParameters() { loadSceneMode = LoadSceneMode.Single, localPhysicsMode = LocalPhysicsMode.None };
-				var loadOp = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(SampleLevelsManager.GetEditorSampleScenePath("Sample-UITestScene.unity"), sceneParam);
+				var loadOp = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(SampleLevelsManager.GetEditorSampleScenePath("Sample-InputTestScene.unity"), sceneParam);
 				while (!loadOp.isDone) await Task.Yield();
 			}
 #else
