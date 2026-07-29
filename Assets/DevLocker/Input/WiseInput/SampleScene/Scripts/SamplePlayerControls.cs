@@ -851,7 +851,7 @@ namespace DevLocker.WiseInput.Sample
                     ""name"": """",
                     ""id"": ""9e92bb26-7e3b-4ec4-b06b-3c8f8e498ddc"",
                     ""path"": ""*/{Submit}"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": ""Gamepad;Keyboard&Mouse;Touch"",
                     ""action"": ""Submit"",
