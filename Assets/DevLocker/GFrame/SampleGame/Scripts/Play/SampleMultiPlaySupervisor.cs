@@ -57,7 +57,7 @@ namespace DevLocker.GFrame.SampleGame.Play
 			// Setup all the context and stacks for each player.
 
 			foreach(MultiplayerEventSystem eventSystem in eventSystems) {
-				var playerControls = new WiseInput.Sample.SamplePlayerControls();
+				var playerControls = new SampleGamePlayerControls();
 
 				var playerInput = eventSystem.GetComponent<PlayerInput>();
 				var playerController = playerInput.camera.GetComponentInParent<SamplePlayerController>();

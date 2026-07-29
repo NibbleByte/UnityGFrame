@@ -1,5 +1,5 @@
+using DevLocker.GFrame.SampleGame.Game;
 using DevLocker.WiseInput;
-using DevLocker.WiseInput.Sample;
 using UnityEngine.InputSystem;
 
 namespace DevLocker.GFrame.SampleGame.Play
@@ -8,9 +8,9 @@ namespace DevLocker.GFrame.SampleGame.Play
 	/// Player is in jumper state - can move left and right + jump and is affected by gravity.
 	/// This state also controls what is displayed on the UI via the UIController.
 	/// </summary>
-	public class SamplePlayJumperState : IPlayerState, SamplePlayerControls.ISample_PlayJumperActions
+	public class SamplePlayJumperState : IPlayerState, SampleGamePlayerControls.ISample_PlayJumperActions
 	{
-		private SamplePlayerControls m_PlayerControls;
+		private SampleGamePlayerControls m_PlayerControls;
 		private SamplePlayerController m_PlayerController;
 		private SamplePlayUIController m_UIController;
 
