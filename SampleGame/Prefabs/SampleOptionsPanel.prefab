@@ -673,7 +673,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 1
-  m_InputAction: {fileID: -6345765068046251359, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 84c38693-b231-4085-b16e-a242cb7f7a49
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -6345765068046251359, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &1268881109926130127
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,7 +833,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 2
-  m_InputAction: {fileID: -545284412596635738, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 5eb6e09b-e34b-4269-92ec-72534e34e5f6
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -545284412596635738, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &1268881110335725833
 GameObject:
   m_ObjectHideFlags: 0
@@ -1557,7 +1579,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Input Property
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 7eff1569-33f6-458e-b3b9-a09cb16902f8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &1268881110950398496
 GameObject:
   m_ObjectHideFlags: 0
@@ -2811,7 +2844,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 1
-  m_InputAction: {fileID: 2852409272423593020, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 2a54f11c-dcc1-405b-b615-f18bad16d9cd
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 2852409272423593020, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &1268881111879395786
 GameObject:
   m_ObjectHideFlags: 0

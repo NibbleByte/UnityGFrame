@@ -273,13 +273,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -545284412596635738, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
-      value: 
-      objectReference: {fileID: 428128101}
-    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
+      propertyPath: m_InputProperty.m_Reference
+      value: 
+      objectReference: {fileID: 428128101}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.DisplayedControlScheme
       value: Gamepad
@@ -392,13 +392,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -545284412596635738, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
-      value: 
-      objectReference: {fileID: 428128101}
-    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
+      propertyPath: m_InputProperty.m_Reference
+      value: 
+      objectReference: {fileID: 428128101}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.DisplayedControlScheme
       value: Gamepad
@@ -1059,13 +1059,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -545284412596635738, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
-      value: 
-      objectReference: {fileID: 428128101}
-    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
+      propertyPath: m_InputProperty.m_Reference
+      value: 
+      objectReference: {fileID: 428128101}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.DisplayedControlScheme
       value: Gamepad
@@ -1613,13 +1613,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -545284412596635738, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
-      value: 
-      objectReference: {fileID: 428128101}
-    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
+      propertyPath: m_InputProperty.m_Reference
+      value: 
+      objectReference: {fileID: 428128101}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.DisplayedControlScheme
       value: Gamepad
@@ -3220,7 +3220,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 01b5a213-d1be-4abb-84e5-807f417d068b
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &1296880502
 GameObject:
   m_ObjectHideFlags: 0
@@ -3507,7 +3518,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: e1c73a7e-dbb3-49bd-8112-72285fb725d9
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!114 &1297835257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3675,7 +3697,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 1681819c-32b6-480c-aa65-abbae1e6a5ef
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -7452923264383808493, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &1624517864
 GameObject:
   m_ObjectHideFlags: 0
@@ -4638,13 +4671,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -545284412596635738, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
-      value: 
-      objectReference: {fileID: 428128101}
-    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.Mode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
+      propertyPath: m_InputProperty.m_Reference
+      value: 
+      objectReference: {fileID: 428128101}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
       propertyPath: DisplayMode.DisplayedControlScheme
       value: Gamepad
