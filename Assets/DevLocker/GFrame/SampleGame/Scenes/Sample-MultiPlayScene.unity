@@ -171,7 +171,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 624032ee-5d3c-4b48-9cdc-7c2cb5bd46d6
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1332669761}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -200,7 +211,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 86e46281-1bd6-4ee1-aa57-64fc2b415722
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 936201677}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -669,7 +691,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 81cad1ba-e6be-42f2-93b9-6806a42d468e
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1730423541}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -2835,7 +2868,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: ee3edbec-4a97-4782-97cd-feee927d159b
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1628424256}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -2864,7 +2908,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: cc42460b-2b69-45f3-b073-65b92e8b62d9
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1365124316}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -3568,7 +3623,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 6f858226-a6ba-4007-abfd-3f337a357d12
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 2058897299}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -3597,7 +3663,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: b7081a4d-1264-492d-942b-41446321f131
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 2127293146}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -4191,7 +4268,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 8108be6e-4a8a-4cd5-9a9f-c4b0538e53d4
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 234137313}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -4627,7 +4715,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 3ca735fa-2119-47e7-8922-b8997fd648f8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1789272804}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -4656,7 +4755,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 7763b032-7147-4e09-8f20-9ed53ac716b7
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 57742457}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -5255,7 +5365,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 058711cc-d7d3-4c86-a9dd-27d8b1198360
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 481010172}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -6733,7 +6854,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 173576bf-0185-4fc8-a761-51fa6e33926a
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1319498577}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -7107,7 +7239,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 681b3c4f-85ee-4a87-b741-77fb6e75075d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1993795021}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -7136,7 +7279,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 67cca5d3-3cdd-4f5f-b96b-07f2c530d4d4
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -1922874302404671578, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1893244789}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -7454,7 +7608,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1797235489119140995, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
+      propertyPath: m_InputProperty.m_Reference
       value: 
       objectReference: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
     - target: {fileID: 5394036698972749555, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
@@ -8301,7 +8455,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1797235489119140995, guid: cfe6350f5d9d98c4d95bffc578542f16, type: 3}
     - target: {fileID: 5394036698972749554, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
-      propertyPath: m_InputAction
+      propertyPath: m_InputProperty.m_Reference
       value: 
       objectReference: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
     - target: {fileID: 5394036698972749555, guid: 504071ccb1c836441a5189a8697819a8, type: 3}
@@ -8577,7 +8731,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: cffb7a15-bb80-4765-95b2-43ef282346f8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 104409988}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -8981,7 +9146,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 1a915bd7-dfd6-43e1-92c0-d02f05ece8e0
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1652075115}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -9010,7 +9186,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: da730efb-0121-4261-8f21-13684dde9996
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1141138393}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -9216,7 +9403,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: b0a610a4-9419-4005-94f2-c308f0c4c9c7
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 334952923}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 1
@@ -9245,7 +9443,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: f7c9a5da-ea6e-4c99-a8c7-3fa1b191922a
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1061343406}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 1
@@ -9451,7 +9660,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: f021a6f8-53f7-408e-b594-a2fba8afe80b
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 7965728}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -9480,7 +9700,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: ccd8aacb-a827-4b4b-91ef-8c1d3e3e8101
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 268206196}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -10040,7 +10271,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: b4b44e69-46a9-4c2d-9205-8f1b4c829d22
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 915274186}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -10069,7 +10311,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 93eca9b7-0b59-483e-8d91-c8d859624dc8
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1052062003}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -10588,7 +10841,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 8b7fcdc3-93b1-43b1-8ea2-cccc3eeb99e6
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 812291148}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -10617,7 +10881,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: bdbbd273-7d72-4ac2-af8a-6b8ca7cdf9a1
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 2134122524}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -10688,7 +10963,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 969ab725-7b85-4fa3-b38f-f1755f7e1e29
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!114 &1448866746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10834,7 +11120,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 677a5788-ac69-4ebd-a96c-59aa3052a9af
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 4954428932722542450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 355530011}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -11039,7 +11336,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 31ffe4ff-b342-4b22-a841-d50bbc4ed4c1
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -2611524535924488063, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 477935500}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -11330,7 +11638,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: af5fb679-c858-49eb-be6a-b44186a42d6e
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!114 &1612941649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11395,7 +11714,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 2d404a06-93ec-4516-836f-d9b86ea05caf
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1926903281}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 0
@@ -11424,7 +11754,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 5929df0c-ce99-44d9-b4bf-c643783add0f
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 680102560}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -13374,7 +13715,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 149c5199-3012-43a8-93e9-0fa18ada4e55
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1166644655}
   BindingNumberToUse: 1
   CompositePartNumberToUse: 1
@@ -13403,7 +13755,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fe81467647486549b4e360de6a75ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 11b89521-ec2d-4949-8158-eca8ae261e6d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1691544626}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 1
@@ -13470,7 +13833,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 0f77c320-2713-4bdf-8495-c9802de9b321
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 1696241199}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -14514,7 +14888,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 8a2831a3-8e28-4993-b775-9f4b2b5c86fd
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!222 &1914759138
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14906,7 +15291,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: e0f1d838-cea7-4a37-9a1b-c27c9bc815c5
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1335716939742048450, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 340378311}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -15111,7 +15507,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cd72c18599a5b4dbc783bf08f0244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InputAction: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: f1d6118b-8ee2-4030-8980-3e7d500d7417
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: -8529792337968349628, guid: 98d9710c93909824599890d9153d33f9, type: 3}
   Text: {fileID: 463462987}
   BindingNumberToUse: 0
   CompositePartNumberToUse: 0
@@ -15689,7 +16096,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SkipHotkey: 0
-  m_InputAction: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
+  m_InputProperty:
+    m_UseReference: 1
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: ba13f783-bb4b-4ca0-ab0f-ca02b2d86bc4
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 1797235489119140995, guid: 98d9710c93909824599890d9153d33f9, type: 3}
 --- !u!1 &2114304598
 GameObject:
   m_ObjectHideFlags: 0
