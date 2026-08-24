@@ -21,10 +21,6 @@ namespace DevLocker.GFrame.SampleGame.Play
 		{
 			SampleGameContext gameContext = SampleLevelsManager.Instance.GameContext;
 
-			if (MessageBox.MessageBox.Instance) {
-				MessageBox.MessageBox.Instance.ForceCloseAllMessages();
-			}
-
 #if UNITY_EDITOR
 			// Can pass it on as a parameter to the supervisor, instead of hard-coding it here.
 			if (SceneManager.GetActiveScene().name != "Sample-PlayScene") {

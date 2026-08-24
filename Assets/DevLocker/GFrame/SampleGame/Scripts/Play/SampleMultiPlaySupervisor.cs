@@ -28,10 +28,6 @@ namespace DevLocker.GFrame.SampleGame.Play
 		{
 			SampleGameContext gameContext = SampleLevelsManager.Instance.GameContext;
 
-			if (MessageBox.MessageBox.Instance) {
-				MessageBox.MessageBox.Instance.ForceCloseAllMessages();
-			}
-
 			// Disable the global PlayerInput component as each player will have their own.
 			gameContext.PlayerInput.gameObject.SetActive(false);
 
