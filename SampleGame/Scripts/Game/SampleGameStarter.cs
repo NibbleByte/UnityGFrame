@@ -1,4 +1,3 @@
-using DevLocker.GFrame.MessageBox;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,7 +24,6 @@ namespace DevLocker.GFrame.SampleGame.Game
 
 		public GameObject GameInputPrefab;
 		public UIUtils.UISimpleCanvasGroupFader_LoadingScreen LevelFader;
-		public MessageBox.MessageBox MessageBoxPrefab;
 
 		public InputBindingDisplayAsset[] BindingDisplayAssets;
 
@@ -48,7 +46,6 @@ namespace DevLocker.GFrame.SampleGame.Game
 
 			var gameInputObject = Instantiate(GameInputPrefab, transform);
 			var levelFader = Instantiate(LevelFader.gameObject, transform).GetComponent<UIUtils.UISimpleCanvasGroupFader_LoadingScreen>();
-			Instantiate(MessageBoxPrefab.gameObject, transform);
 
 			gameInputObject.name = gameInputObject.name.Replace("(Clone)", "-Global");
 			var playerInput = gameInputObject.GetComponentInChildren<PlayerInput>();
@@ -119,57 +116,5 @@ namespace DevLocker.GFrame.SampleGame.Game
 				m_LastInputConflictsReport = conflictsReport;
 			}
 		}
-
-#if UNITY_EDITOR
-		private void Update()
-		{
-			if (Keyboard.current.f4Key.wasPressedThisFrame) {
-				MessageBox.MessageBox.Instance.ShowProcessing(
-					"Level is downloading?", "",
-					"The level is downloading. Please wait or go play another level.",
-					MessageBoxIcon.Information,
-					MessageBoxButtons.RetryCancel,
-					new Dictionary<MessageBoxButtons, string>() { { MessageBoxButtons.Retry, "Start Level" } },
-					new FakeProcessingProgressTracker(20),
-					(res) => { Debug.Log($"Processing response - {res.MessageResponse}", this); },
-					this
-					);
-				//Serialize();
-			}
-
-			if (Keyboard.current.f5Key.wasPressedThisFrame) {
-				MessageBox.MessageBox.Instance.ShowInput(
-					"Save?",
-					"Are you sure you want to save?",
-					"Savegame-001",
-					null,
-					MessageBoxIcon.Question,
-					MessageBoxButtons.YesNo,
-					(res) => { Debug.Log($"Save response - {res.MessageResponse}", this); },
-					this
-					);
-				//Serialize();
-			}
-
-			if (Keyboard.current.f6Key.wasPressedThisFrame) {
-				MessageBox.MessageBox.Instance.ShowSimple(
-					"Load?",
-					"Are you sure you want to load?\nAll current progress will be lost!",
-					MessageBoxIcon.Warning,
-					MessageBoxButtons.YesNo,
-					(res) => { Debug.Log($"Load response - {res.MessageResponse}", this); },
-					this
-					);
-			}
-
-			if (Keyboard.current.f7Key.wasPressedThisFrame) {
-				MessageBox.MessageBox.Instance.ForceConfirmShownMessage();
-			}
-
-			if (Keyboard.current.f8Key.wasPressedThisFrame) {
-				MessageBox.MessageBox.Instance.ForceDenyShownMessage();
-			}
-		}
-#endif
 	}
 }
